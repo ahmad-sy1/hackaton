@@ -20,6 +20,37 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Projectstructuur
+
+Drie lagen, elk met een eigen plek:
+
+```
+app/                      # FRONTEND — routing en UI (Next.js App Router)
+  layout.tsx, page.tsx    #   pagina's en layouts
+  _components/            #   gedeelde componenten (niet routeerbaar door de _)
+
+src/
+  db/                     # DATABASE — alles bij elkaar
+    schema/              #   één bestand per tabel + index.ts (barrel)
+      subscriptions.ts
+      users.ts
+      visit-logs.ts
+    migrations/          #   gegenereerde SQL + meta/ (snapshots per migratie)
+    index.ts            #   de Drizzle-client (import { db } from "@/src/db")
+    seed.ts            #   testdata
+  server/                # BACKEND — server actions per feature
+    <feature>/actions.ts  #   "use server", mutaties
+    <feature>/queries.ts  #   Drizzle-reads (geen raw SQL in componenten)
+  lib/                    # helpers zonder laag-binding (pin-hashing, datums)
+
+src/db/migrations/        # inlevermomenten van het schema; nooit met de hand wijzigen
+drizzle.config.ts         # wijst schema -> src/db/schema, out -> src/db/migrations
+```
+
+Nieuwe tabel: nieuw bestand in `src/db/schema/`, toevoegen aan `schema/index.ts`,
+dan `npm run db:generate`. Nieuwe backend-functionaliteit: map onder `src/server/`.
+Nieuw scherm: route-map onder `app/`.
+
 ## Commando's
 
 Alles loopt via `npm run <script>`; je hoeft geen losse `npx`-commando's te
@@ -48,7 +79,11 @@ onthouden. Draai **`npm run check`** vóór elke commit.
 ## Database
 
 De datalaag draait op PostgreSQL met [Drizzle ORM](https://orm.drizzle.team).
-Het schema staat in `src/db/schema.ts`, de client in `src/db/index.ts`.
+Het schema staat in `src/db/schema/` (één bestand per tabel), de client in `src/db/index.ts`.
+
+Elke keer dat een tabelbestand wordt aangemaakt of gewijzigd: tabel toevoegen aan
+`src/db/schema/index.ts` en daarna **`npm run db:generate`** draaien. Bij elke
+schemawijziging hoort een migratie.
 
 ### Tabellen
 
@@ -89,7 +124,7 @@ werkt het meteen:
 ```bash
 cp .env.example .env      # standaardwaarde past al bij docker-compose.yml
 npm run db:up             # start PostgreSQL en wacht op de healthcheck
-npm run db:migrate        # voert drizzle/0000_init.sql uit
+npm run db:migrate        # voert src/db/migrations/0000_init.sql uit
 npm run db:seed           # vult de database met testdata
 ```
 
