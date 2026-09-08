@@ -1,4 +1,4 @@
 .next
 node_modules
-drizzle
+src/db/migrations
 package-lock.json
