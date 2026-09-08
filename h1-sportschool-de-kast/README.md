@@ -20,6 +20,59 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Database
+
+De datalaag draait op PostgreSQL met [Drizzle ORM](https://orm.drizzle.team).
+Het schema staat in `src/db/schema.ts`, de client in `src/db/index.ts`.
+
+### Tabellen
+
+| Tabel | Doel |
+| --- | --- |
+| `Subscriptions` | De abonnementstypen (Basis, Plus, Premium). `subscription_limit` is het maximum aantal bezoeken per week. |
+| `Users` | De leden. Bevat NAW-gegevens, een verwijzing naar het abonnementstype, en `pin_hash` (de bcrypt-hash van de pincode, nooit de pincode zelf). |
+| `visit_logs` | Elke toegangspoging bij de deur, geslaagd (`access_granted = true`) én geweigerd (`false`). `subscription_type_id` legt vast met welk abonnementstype er is aangeklopt. |
+
+### NULL-conventies
+
+- `Subscriptions.subscription_limit` **NULL** = onbeperkt aantal bezoeken (Premium).
+- `Users.subscription_end` **NULL** = het abonnement is niet opgezegd. Staat er wél
+  een datum, dan is er opgezegd en loopt het abonnement door tot die datum.
+
+### Waarom is `visit_logs.user_id` nullable?
+
+Bezoeklogs worden na 14 dagen geanonimiseerd: `user_id` wordt dan op NULL gezet
+(de foreign key staat op `ON DELETE set null`). `subscription_type_id` blijft
+staan, zodat de sportschool nog kan zien wélk abonnementstype er langskwam zonder
+te weten wie het was.
+
+### Lokaal opstarten
+
+```bash
+cp .env.example .env      # vul daarna je eigen DATABASE_URL in
+npm run db:migrate        # voert drizzle/0000_init.sql uit
+npm run db:seed           # vult de database met testdata
+```
+
+Overige scripts: `npm run db:generate` (nieuwe migratie genereren uit het schema)
+en `npm run db:studio` (Drizzle Studio).
+
+### Testleden
+
+Alle testleden hebben pincode **1234** (alleen voor de dev-omgeving).
+
+| Lid | Abonnement | Situatie in de seed | Dekt af |
+| --- | --- | --- | --- |
+| Sanne de Vries | Basis (1/week) | Laatste bezoek was vorige week | Weekteller reset op maandag: vorige week telt niet mee, Sanne mag er weer in |
+| Mo El Amrani | Basis (1/week) | Deze week al één geslaagd bezoek + één geweigerde poging | Weeklimiet bereikt → volgende poging wordt geweigerd én de weigering wordt gelogd |
+| Youssef Bakker | Plus (2/week) | Deze week één bezoek | Nog ruimte binnen de weeklimiet → toegang wordt verleend |
+| Lisa Jansen | Premium (onbeperkt) | Drie bezoeken deze week | `subscription_limit` NULL → nooit geweigerd op aantal |
+| Karim Yilmaz | Plus (2/week) | `subscription_end` in de toekomst | US-02: opgezegd abonnement dat nog doorloopt tot de vervaldatum → nog steeds toegang |
+| Nadia Peters | Basis (1/week) | Bezoeklog van 21 dagen oud | Testcase voor de anonimiseerknop (logs ouder dan 14 dagen) |
+
+Daarnaast bevat de seed één al geanonimiseerde bezoeklog (`user_id` NULL,
+`subscription_type_id` bewaard) als voorbeeld van de eindtoestand na anonimisering.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
