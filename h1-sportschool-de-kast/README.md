@@ -48,11 +48,32 @@ te weten wie het was.
 
 ### Lokaal opstarten
 
+Er is geen kant-en-klare database; je draait er zelf een. De meegeleverde
+`docker-compose.yml` start een PostgreSQL 17 met vaste gegevens:
+
+| | |
+| --- | --- |
+| gebruiker | `dekast` |
+| wachtwoord | `dekast` |
+| databasenaam | `dekast` |
+| poort | `5432` |
+
+Deze komen exact overeen met de `DATABASE_URL` in `.env.example`, dus na kopiëren
+werkt het meteen:
+
 ```bash
-cp .env.example .env      # vul daarna je eigen DATABASE_URL in
+cp .env.example .env      # standaardwaarde past al bij docker-compose.yml
+docker compose up -d      # start PostgreSQL (Docker Desktop moet draaien)
 npm run db:migrate        # voert drizzle/0000_init.sql uit
 npm run db:seed           # vult de database met testdata
 ```
+
+Stoppen met `docker compose down` (data blijft bewaard in het volume
+`dekast-db-data`); `docker compose down -v` wist ook de data.
+
+Geen Docker? Dan zet je zelf een PostgreSQL op (bijv. Postgres.app of Homebrew),
+maak je een lege database aan en pas je `DATABASE_URL` in `.env` aan naar
+`postgres://<user>:<wachtwoord>@<host>:<poort>/<databasenaam>`.
 
 Overige scripts: `npm run db:generate` (nieuwe migratie genereren uit het schema)
 en `npm run db:studio` (Drizzle Studio).
