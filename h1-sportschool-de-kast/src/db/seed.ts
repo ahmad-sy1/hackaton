@@ -50,7 +50,8 @@ async function seed() {
   // Alle testleden gebruiken pincode 1234 — alleen voor de dev-omgeving.
   const pinHash = hashSync("1234", 10);
 
-  const [sanne, mo, youssef, lisa, _karim, nadia] = await db
+  // Karim zit wel in de seed maar krijgt geen visit-logs, dus geen binding nodig.
+  const [sanne, mo, youssef, lisa, , nadia] = await db
     .insert(users)
     .values([
       {
