@@ -27,11 +27,11 @@ Het schema staat in `src/db/schema.ts`, de client in `src/db/index.ts`.
 
 ### Tabellen
 
-| Tabel | Doel |
-| --- | --- |
-| `Subscriptions` | De abonnementstypen (Basis, Plus, Premium). `subscription_limit` is het maximum aantal bezoeken per week. |
-| `Users` | De leden. Bevat NAW-gegevens, een verwijzing naar het abonnementstype, en `pin_hash` (de bcrypt-hash van de pincode, nooit de pincode zelf). |
-| `visit_logs` | Elke toegangspoging bij de deur, geslaagd (`access_granted = true`) én geweigerd (`false`). `subscription_type_id` legt vast met welk abonnementstype er is aangeklopt. |
+| Tabel           | Doel                                                                                                                                                                    |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Subscriptions` | De abonnementstypen (Basis, Plus, Premium). `subscription_limit` is het maximum aantal bezoeken per week.                                                               |
+| `Users`         | De leden. Bevat NAW-gegevens, een verwijzing naar het abonnementstype, en `pin_hash` (de bcrypt-hash van de pincode, nooit de pincode zelf).                            |
+| `visit_logs`    | Elke toegangspoging bij de deur, geslaagd (`access_granted = true`) én geweigerd (`false`). `subscription_type_id` legt vast met welk abonnementstype er is aangeklopt. |
 
 ### NULL-conventies
 
@@ -51,12 +51,12 @@ te weten wie het was.
 Er is geen kant-en-klare database; je draait er zelf een. De meegeleverde
 `docker-compose.yml` start een PostgreSQL 17 met vaste gegevens:
 
-| | |
-| --- | --- |
-| gebruiker | `dekast` |
-| wachtwoord | `dekast` |
+|              |          |
+| ------------ | -------- |
+| gebruiker    | `dekast` |
+| wachtwoord   | `dekast` |
 | databasenaam | `dekast` |
-| poort | `5432` |
+| poort        | `5432`   |
 
 Deze komen exact overeen met de `DATABASE_URL` in `.env.example`, dus na kopiëren
 werkt het meteen:
@@ -82,14 +82,14 @@ en `npm run db:studio` (Drizzle Studio).
 
 Alle testleden hebben pincode **1234** (alleen voor de dev-omgeving).
 
-| Lid | Abonnement | Situatie in de seed | Dekt af |
-| --- | --- | --- | --- |
-| Sanne de Vries | Basis (1/week) | Laatste bezoek was vorige week | Weekteller reset op maandag: vorige week telt niet mee, Sanne mag er weer in |
-| Mo El Amrani | Basis (1/week) | Deze week al één geslaagd bezoek + één geweigerde poging | Weeklimiet bereikt → volgende poging wordt geweigerd én de weigering wordt gelogd |
-| Youssef Bakker | Plus (2/week) | Deze week één bezoek | Nog ruimte binnen de weeklimiet → toegang wordt verleend |
-| Lisa Jansen | Premium (onbeperkt) | Drie bezoeken deze week | `subscription_limit` NULL → nooit geweigerd op aantal |
-| Karim Yilmaz | Plus (2/week) | `subscription_end` in de toekomst | US-02: opgezegd abonnement dat nog doorloopt tot de vervaldatum → nog steeds toegang |
-| Nadia Peters | Basis (1/week) | Bezoeklog van 21 dagen oud | Testcase voor de anonimiseerknop (logs ouder dan 14 dagen) |
+| Lid            | Abonnement          | Situatie in de seed                                      | Dekt af                                                                              |
+| -------------- | ------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Sanne de Vries | Basis (1/week)      | Laatste bezoek was vorige week                           | Weekteller reset op maandag: vorige week telt niet mee, Sanne mag er weer in         |
+| Mo El Amrani   | Basis (1/week)      | Deze week al één geslaagd bezoek + één geweigerde poging | Weeklimiet bereikt → volgende poging wordt geweigerd én de weigering wordt gelogd    |
+| Youssef Bakker | Plus (2/week)       | Deze week één bezoek                                     | Nog ruimte binnen de weeklimiet → toegang wordt verleend                             |
+| Lisa Jansen    | Premium (onbeperkt) | Drie bezoeken deze week                                  | `subscription_limit` NULL → nooit geweigerd op aantal                                |
+| Karim Yilmaz   | Plus (2/week)       | `subscription_end` in de toekomst                        | US-02: opgezegd abonnement dat nog doorloopt tot de vervaldatum → nog steeds toegang |
+| Nadia Peters   | Basis (1/week)      | Bezoeklog van 21 dagen oud                               | Testcase voor de anonimiseerknop (logs ouder dan 14 dagen)                           |
 
 Daarnaast bevat de seed één al geanonimiseerde bezoeklog (`user_id` NULL,
 `subscription_type_id` bewaard) als voorbeeld van de eindtoestand na anonimisering.
