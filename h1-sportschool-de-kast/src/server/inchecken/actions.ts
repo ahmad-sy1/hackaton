@@ -1,7 +1,8 @@
 "use server";
 
 import { drizzleIncheckPoort } from "./queries";
-import { verwerkIncheck, type IncheckResultaat } from "./toegang";
+import { verwerkIncheck } from "./toegang";
+import type { IncheckResultaat } from "./toegang.types";
 
 /**
  * Server action voor het inchecken aan de balie.

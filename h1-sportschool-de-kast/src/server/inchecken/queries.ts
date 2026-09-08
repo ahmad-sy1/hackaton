@@ -1,7 +1,11 @@
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, eq, gte } from "drizzle-orm";
 import { db } from "../../db";
 import { subscriptions, users, visitLogs } from "../../db/schema";
-import type { IncheckPoort, LidMetAbonnement, LogInvoer } from "./toegang";
+import type {
+  IncheckPoort,
+  LidMetAbonnement,
+  LogInvoer,
+} from "./toegang.types";
 
 /** Drizzle-implementatie van de incheckpoort. Alle databasetoegang zit hier. */
 export const drizzleIncheckPoort: IncheckPoort = {
@@ -30,18 +34,14 @@ export const drizzleIncheckPoort: IncheckPoort = {
   async telGeslaagdeBezoekenSinds(lidId: number, vanaf: Date): Promise<number> {
     // AC1: tellen via een query op visit_logs, geen tellerkolom. Alleen
     // geslaagde bezoeken vanaf de laatste maandag tellen mee.
-    const [rij] = await db
-      .select({ aantal: sql<number>`cast(count(*) as int)` })
-      .from(visitLogs)
-      .where(
-        and(
-          eq(visitLogs.userId, lidId),
-          eq(visitLogs.accessGranted, true),
-          gte(visitLogs.visitDate, vanaf),
-        ),
-      );
-
-    return rij?.aantal ?? 0;
+    return db.$count(
+      visitLogs,
+      and(
+        eq(visitLogs.userId, lidId),
+        eq(visitLogs.accessGranted, true),
+        gte(visitLogs.visitDate, vanaf),
+      ),
+    );
   },
 
   async logPoging(invoer: LogInvoer): Promise<void> {

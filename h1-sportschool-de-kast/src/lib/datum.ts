@@ -16,3 +16,11 @@ export function laatsteMaandag(moment: Date = new Date()): Date {
   maandag.setHours(0, 0, 0, 0);
   return maandag;
 }
+
+/** Datum van `moment` als "YYYY-MM-DD" in lokale tijd. */
+export function lokaleDatum(moment: Date = new Date()): string {
+  const jaar = moment.getFullYear();
+  const maand = String(moment.getMonth() + 1).padStart(2, "0");
+  const dag = String(moment.getDate()).padStart(2, "0");
+  return `${jaar}-${maand}-${dag}`;
+}
