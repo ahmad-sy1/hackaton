@@ -20,6 +20,31 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Commando's
+
+Alles loopt via `npm run <script>`; je hoeft geen losse `npx`-commando's te
+onthouden. Draai **`npm run check`** vóór elke commit.
+
+| Script                 | Wat het doet                                                  | Wanneer                                                         |
+| ---------------------- | ------------------------------------------------------------- | --------------------------------------------------------------- |
+| `npm run dev`          | Start de Next.js-dev-server                                   | Tijdens ontwikkelen                                             |
+| `npm run build`        | Productie-build                                               | Vóór deploy of om de build te controleren                       |
+| `npm run start`        | Draait de productie-build                                     | Na `npm run build`                                              |
+| `npm run lint`         | ESLint                                                        | Code controleren op fouten                                      |
+| `npm run lint:fix`     | ESLint met `--fix`                                            | Automatisch oplosbare lint-fouten wegwerken                     |
+| `npm run format`       | Prettier over het hele project schrijven                      | Opmaak toepassen                                                |
+| `npm run format:check` | Prettier alleen controleren                                   | In CI / onderdeel van `check`                                   |
+| `npm run typecheck`    | `tsc --noEmit`                                                | Types controleren zonder te builden                             |
+| `npm run check`        | `format:check` + `lint` + `typecheck`                         | **Vóór elke commit**                                            |
+| `npm run db:up`        | `docker compose up -d --wait` (wacht op de healthcheck)       | Database starten                                                |
+| `npm run db:down`      | `docker compose down` (data blijft in het volume)             | Database stoppen                                                |
+| `npm run db:logs`      | Volgt de logs van de `db`-service                             | Meekijken met Postgres                                          |
+| `npm run db:generate`  | Nieuwe migratie genereren uit het schema                      | Na een schemawijziging                                          |
+| `npm run db:migrate`   | Migraties uitvoeren                                           | Database naar de laatste stand brengen                          |
+| `npm run db:studio`    | Drizzle Studio openen                                         | Data bekijken in de browser                                     |
+| `npm run db:seed`      | Testdata inladen (`src/db/seed.ts`)                           | Lege database vullen                                            |
+| `npm run db:reset`     | `docker compose down -v` → `db:up` → `db:migrate` → `db:seed` | Schone herstart. **Wist alle data** (`-v` gooit het volume weg) |
+
 ## Database
 
 De datalaag draait op PostgreSQL met [Drizzle ORM](https://orm.drizzle.team).
@@ -27,11 +52,11 @@ Het schema staat in `src/db/schema.ts`, de client in `src/db/index.ts`.
 
 ### Tabellen
 
-| Tabel | Doel |
-| --- | --- |
-| `Subscriptions` | De abonnementstypen (Basis, Plus, Premium). `subscription_limit` is het maximum aantal bezoeken per week. |
-| `Users` | De leden. Bevat NAW-gegevens, een verwijzing naar het abonnementstype, en `pin_hash` (de bcrypt-hash van de pincode, nooit de pincode zelf). |
-| `visit_logs` | Elke toegangspoging bij de deur, geslaagd (`access_granted = true`) én geweigerd (`false`). `subscription_type_id` legt vast met welk abonnementstype er is aangeklopt. |
+| Tabel           | Doel                                                                                                                                                                    |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Subscriptions` | De abonnementstypen (Basis, Plus, Premium). `subscription_limit` is het maximum aantal bezoeken per week.                                                               |
+| `Users`         | De leden. Bevat NAW-gegevens, een verwijzing naar het abonnementstype, en `pin_hash` (de bcrypt-hash van de pincode, nooit de pincode zelf).                            |
+| `visit_logs`    | Elke toegangspoging bij de deur, geslaagd (`access_granted = true`) én geweigerd (`false`). `subscription_type_id` legt vast met welk abonnementstype er is aangeklopt. |
 
 ### NULL-conventies
 
@@ -51,25 +76,27 @@ te weten wie het was.
 Er is geen kant-en-klare database; je draait er zelf een. De meegeleverde
 `docker-compose.yml` start een PostgreSQL 17 met vaste gegevens:
 
-| | |
-| --- | --- |
-| gebruiker | `dekast` |
-| wachtwoord | `dekast` |
+|              |          |
+| ------------ | -------- |
+| gebruiker    | `dekast` |
+| wachtwoord   | `dekast` |
 | databasenaam | `dekast` |
-| poort | `5432` |
+| poort        | `5432`   |
 
 Deze komen exact overeen met de `DATABASE_URL` in `.env.example`, dus na kopiëren
 werkt het meteen:
 
 ```bash
 cp .env.example .env      # standaardwaarde past al bij docker-compose.yml
-docker compose up -d      # start PostgreSQL (Docker Desktop moet draaien)
+npm run db:up             # start PostgreSQL en wacht op de healthcheck
 npm run db:migrate        # voert drizzle/0000_init.sql uit
 npm run db:seed           # vult de database met testdata
 ```
 
-Stoppen met `docker compose down` (data blijft bewaard in het volume
-`dekast-db-data`); `docker compose down -v` wist ook de data.
+Stoppen met `npm run db:down` (data blijft bewaard in het volume
+`dekast-db-data`); `docker compose down -v` wist ook de data. `npm run db:reset`
+doet dat laatste voor je en bouwt de database daarna schoon opnieuw op —
+**dat wist dus alle data**.
 
 Geen Docker? Dan zet je zelf een PostgreSQL op (bijv. Postgres.app of Homebrew),
 maak je een lege database aan en pas je `DATABASE_URL` in `.env` aan naar
@@ -82,14 +109,14 @@ en `npm run db:studio` (Drizzle Studio).
 
 Alle testleden hebben pincode **1234** (alleen voor de dev-omgeving).
 
-| Lid | Abonnement | Situatie in de seed | Dekt af |
-| --- | --- | --- | --- |
-| Sanne de Vries | Basis (1/week) | Laatste bezoek was vorige week | Weekteller reset op maandag: vorige week telt niet mee, Sanne mag er weer in |
-| Mo El Amrani | Basis (1/week) | Deze week al één geslaagd bezoek + één geweigerde poging | Weeklimiet bereikt → volgende poging wordt geweigerd én de weigering wordt gelogd |
-| Youssef Bakker | Plus (2/week) | Deze week één bezoek | Nog ruimte binnen de weeklimiet → toegang wordt verleend |
-| Lisa Jansen | Premium (onbeperkt) | Drie bezoeken deze week | `subscription_limit` NULL → nooit geweigerd op aantal |
-| Karim Yilmaz | Plus (2/week) | `subscription_end` in de toekomst | US-02: opgezegd abonnement dat nog doorloopt tot de vervaldatum → nog steeds toegang |
-| Nadia Peters | Basis (1/week) | Bezoeklog van 21 dagen oud | Testcase voor de anonimiseerknop (logs ouder dan 14 dagen) |
+| Lid            | Abonnement          | Situatie in de seed                                      | Dekt af                                                                              |
+| -------------- | ------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Sanne de Vries | Basis (1/week)      | Laatste bezoek was vorige week                           | Weekteller reset op maandag: vorige week telt niet mee, Sanne mag er weer in         |
+| Mo El Amrani   | Basis (1/week)      | Deze week al één geslaagd bezoek + één geweigerde poging | Weeklimiet bereikt → volgende poging wordt geweigerd én de weigering wordt gelogd    |
+| Youssef Bakker | Plus (2/week)       | Deze week één bezoek                                     | Nog ruimte binnen de weeklimiet → toegang wordt verleend                             |
+| Lisa Jansen    | Premium (onbeperkt) | Drie bezoeken deze week                                  | `subscription_limit` NULL → nooit geweigerd op aantal                                |
+| Karim Yilmaz   | Plus (2/week)       | `subscription_end` in de toekomst                        | US-02: opgezegd abonnement dat nog doorloopt tot de vervaldatum → nog steeds toegang |
+| Nadia Peters   | Basis (1/week)      | Bezoeklog van 21 dagen oud                               | Testcase voor de anonimiseerknop (logs ouder dan 14 dagen)                           |
 
 Daarnaast bevat de seed één al geanonimiseerde bezoeklog (`user_id` NULL,
 `subscription_type_id` bewaard) als voorbeeld van de eindtoestand na anonimisering.
