@@ -5,23 +5,27 @@
  * database: `verwerkIncheck` kent alleen deze interface, niet Drizzle.
  */
 
+export type WeigerReden =
+  "ongeldige_inloggegevens" | "abonnement_verlopen" | "limiet_bereikt";
+
+export interface IncheckToegestaan {
+  status: "granted";
+  naam: string;
+  bezoekenDezeWeek: number;
+  limiet: number | null;
+}
+
+export interface IncheckGeweigerd {
+  status: "denied";
+  reden: WeigerReden;
+  melding: string;
+}
+
 /**
  * Uitkomst van een incheckpoging. Verwachte uitkomsten (ook weigeringen) zijn
  * een expliciete union, geen exceptions.
  */
-export type IncheckResultaat =
-  | {
-      status: "granted";
-      naam: string;
-      bezoekenDezeWeek: number;
-      limiet: number | null;
-    }
-  | {
-      status: "denied";
-      reden:
-        "ongeldige_inloggegevens" | "abonnement_verlopen" | "limiet_bereikt";
-      melding: string;
-    };
+export type IncheckResultaat = IncheckToegestaan | IncheckGeweigerd;
 
 /** Eén lid met het bijbehorende abonnementstype, zoals de poort het teruggeeft. */
 export interface LidMetAbonnement {
