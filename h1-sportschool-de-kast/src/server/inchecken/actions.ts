@@ -5,7 +5,7 @@ import { verwerkIncheck } from "./toegang";
 import type { IncheckResultaat } from "./toegang.types";
 
 /**
- * Server action voor het inchecken aan de balie.
+ * Server action voor het inchecken aan de deurzuil.
  *
  * Dunne schil: de businessregels staan in `verwerkIncheck`, de databasetoegang
  * in `drizzleIncheckPoort`.

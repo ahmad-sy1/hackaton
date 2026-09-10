@@ -1,18 +1,24 @@
 import { compare } from "bcryptjs";
 import { laatsteMaandag, lokaleDatum } from "../../lib/datum";
-import type { IncheckPoort, IncheckResultaat } from "./toegang.types";
+import type {
+  IncheckGeweigerd,
+  IncheckPoort,
+  IncheckResultaat,
+  WeigerReden,
+} from "./toegang.types";
 
-const PINCODE_PATROON = /^\d{4,10}$/;
+// Exact 4 cijfers, gelijk aan de client-validatie in app/check-in/page.tsx.
+const PINCODE_PATROON = /^\d{4}$/;
 
 // Onbekend lidnummer en foute pincode geven exact dezelfde melding, zodat niet
 // af te leiden is welke lidnummers bestaan (US-08).
-const MELDINGEN = {
+const MELDINGEN: Record<WeigerReden, string> = {
   ongeldige_inloggegevens: "Onjuist lidnummer of onjuiste pincode.",
   abonnement_verlopen:
     "Je abonnement is verlopen. Neem contact op met de balie.",
   limiet_bereikt:
     "Je hebt deze week het maximale aantal bezoeken van je abonnement bereikt.",
-} as const;
+};
 
 /**
  * Volledige toegangscontrole voor één incheckpoging.
@@ -26,7 +32,8 @@ export async function verwerkIncheck(
 ): Promise<IncheckResultaat> {
   // 1. Invoer normaliseren en valideren vóór we de database raken (US-08).
   const lidId = leesLidnummer(lidnummer);
-  if (lidId === null || !PINCODE_PATROON.test(pincode.trim())) {
+  const pin = pincode.trim();
+  if (lidId === null || !PINCODE_PATROON.test(pin)) {
     console.warn("[incheck] geweigerd: ongeldige invoer");
     return weiger("ongeldige_inloggegevens");
   }
@@ -38,6 +45,7 @@ export async function verwerkIncheck(
     return weiger("ongeldige_inloggegevens");
   }
 
+  // Vanaf hier is het lid bekend, dus elke uitkomst wordt gelogd (AC4).
   const logPoging = (toegangVerleend: boolean) =>
     poort.logPoging({
       lidId: lid.id,
@@ -47,8 +55,9 @@ export async function verwerkIncheck(
     });
 
   // 3. Pincode tegen de hash verifiëren; nooit plaintext vergelijken of loggen.
-  if (!(await compare(pincode.trim(), lid.pinHash))) {
+  if (!(await compare(pin, lid.pinHash))) {
     console.warn(`[incheck] geweigerd: onjuiste pincode voor lid ${lidId}`);
+    await logPoging(false);
     return weiger("ongeldige_inloggegevens");
   }
 
@@ -83,7 +92,8 @@ export async function verwerkIncheck(
 function leesLidnummer(ruw: string): number | null {
   const schoon = ruw.trim();
   if (!/^\d{1,9}$/.test(schoon)) return null; // 9 cijfers past altijd in int4
-  return Number(schoon) || null;
+  const id = Number(schoon);
+  return id > 0 ? id : null; // identity-kolom begint bij 1
 }
 
 /** True als de einddatum vóór vandaag ligt; de einddatum zelf is nog geldig. */
@@ -92,6 +102,6 @@ function abonnementVerlopen(einddatum: string | null, nu: Date): boolean {
   return einddatum !== null && einddatum < lokaleDatum(nu);
 }
 
-function weiger(reden: keyof typeof MELDINGEN): IncheckResultaat {
+function weiger(reden: WeigerReden): IncheckGeweigerd {
   return { status: "denied", reden, melding: MELDINGEN[reden] };
 }
