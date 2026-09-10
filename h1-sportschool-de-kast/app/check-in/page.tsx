@@ -65,6 +65,17 @@ export default function CheckInPagina() {
           <span className="text-sm text-zinc-500">Kiosk · Ingang</span>
         </header>
 
+        {uitkomst?.status === "granted" && (
+          <div className="h-1.5 w-full bg-zinc-100" aria-hidden>
+            <div
+              className="h-full origin-left bg-emerald-600"
+              style={{
+                animation: `kiosk-aftellen ${AUTO_TERUG_MS}ms linear forwards`,
+              }}
+            />
+          </div>
+        )}
+
         <div className="p-8 sm:p-12">
           {uitkomst !== null ? (
             <div aria-live="polite">

@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+/* Aftelbalk op het incheck-kioskscherm: loopt in AUTO_TERUG_MS leeg. */
+@keyframes kiosk-aftellen {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
