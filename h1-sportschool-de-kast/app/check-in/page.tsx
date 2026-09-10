@@ -7,7 +7,8 @@ import type { IncheckResultaat } from "@/src/server/inchecken/toegang.types";
 import { Resultaat } from "./_components/Resultaat";
 
 // Kiosk: na een geslaagde check-in automatisch terug naar het invoerscherm.
-const AUTO_TERUG_MS = 5000;
+// 10 s zodat het lid het resultaat rustig kan lezen.
+const AUTO_TERUG_MS = 10000;
 
 // Wat het resultaatscherm toont: de uitkomst van de action, of dat de action
 // zelf niet bereikbaar was. null = invoerscherm.
