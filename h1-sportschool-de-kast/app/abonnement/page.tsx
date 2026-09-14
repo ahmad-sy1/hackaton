@@ -84,12 +84,20 @@ export default function AbonnementPagina() {
           <span className="text-2xl font-bold tracking-tight text-zinc-900">
             De Kast
           </span>
-          <Link
-            href="/check-in"
-            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-          >
-            Inchecken
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/check-in"
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            >
+              Inchecken
+            </Link>
+            <Link
+              href="/beheer"
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            >
+              Beheer
+            </Link>
+          </div>
         </header>
 
         <div className="p-8 sm:p-10">
