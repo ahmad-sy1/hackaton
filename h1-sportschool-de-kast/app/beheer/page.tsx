@@ -7,16 +7,24 @@
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import {
+  bezoeklogsOphalen,
   oudeLogsAnonimiseren,
   statusOphalen,
 } from "@/src/server/beheer/actions";
-import type { AnonimiseerStatus } from "@/src/server/beheer/anonimiseren.types";
+import type {
+  AnonimiseerStatus,
+  BezoeklogWeergave,
+} from "@/src/server/beheer/anonimiseren.types";
 
 // Welk scherm de medewerker ziet.
 type Scherm =
   | { naam: "laden" }
-  | { naam: "overzicht"; status: AnonimiseerStatus }
-  | { naam: "bevestigen"; status: AnonimiseerStatus }
+  | { naam: "overzicht"; status: AnonimiseerStatus; logs: BezoeklogWeergave[] }
+  | {
+      naam: "bevestigen";
+      status: AnonimiseerStatus;
+      logs: BezoeklogWeergave[];
+    }
   | { naam: "klaar"; aantal: number };
 
 export default function BeheerPagina() {
@@ -29,11 +37,18 @@ export default function BeheerPagina() {
   function statusOphalenEnTonen() {
     start(async () => {
       try {
-        const status = await statusOphalen();
-        setScherm({ naam: "overzicht", status });
+        const [status, logs] = await Promise.all([
+          statusOphalen(),
+          bezoeklogsOphalen(),
+        ]);
+        setScherm({ naam: "overzicht", status, logs });
       } catch {
         setFout("Er ging iets mis bij het ophalen van de status.");
-        setScherm({ naam: "overzicht", status: { aantal: 0, grens: "" } });
+        setScherm({
+          naam: "overzicht",
+          status: { aantal: 0, grens: "" },
+          logs: [],
+        });
       }
     });
   }
@@ -97,9 +112,14 @@ export default function BeheerPagina() {
           {scherm.naam === "overzicht" && (
             <Overzicht
               status={scherm.status}
+              logs={scherm.logs}
               fout={fout}
               onAnonimiseren={() =>
-                setScherm({ naam: "bevestigen", status: scherm.status })
+                setScherm({
+                  naam: "bevestigen",
+                  status: scherm.status,
+                  logs: scherm.logs,
+                })
               }
             />
           )}
@@ -110,7 +130,11 @@ export default function BeheerPagina() {
               bezig={bezig}
               onBevestig={anonimiserenBevestigen}
               onAnnuleren={() =>
-                setScherm({ naam: "overzicht", status: scherm.status })
+                setScherm({
+                  naam: "overzicht",
+                  status: scherm.status,
+                  logs: scherm.logs,
+                })
               }
             />
           )}
@@ -126,10 +150,12 @@ export default function BeheerPagina() {
 
 function Overzicht({
   status,
+  logs,
   fout,
   onAnonimiseren,
 }: {
   status: AnonimiseerStatus;
+  logs: BezoeklogWeergave[];
   fout: string | null;
   onAnonimiseren: () => void;
 }) {
@@ -165,6 +191,54 @@ function Overzicht({
         >
           Anonimiseren
         </button>
+      )}
+
+      {logs.length > 0 && (
+        <div className="mt-8 overflow-x-auto rounded-2xl border border-zinc-200">
+          <table className="w-full min-w-[560px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-zinc-200 bg-zinc-50 text-zinc-500">
+                <th className="px-4 py-3 font-semibold">Naam</th>
+                <th className="px-4 py-3 font-semibold">Abonnement</th>
+                <th className="px-4 py-3 font-semibold">Datum &amp; tijd</th>
+                <th className="px-4 py-3 font-semibold">Toegang</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((log) => (
+                <tr
+                  key={log.visitId}
+                  className="border-b border-zinc-100 last:border-0"
+                >
+                  <td
+                    className={
+                      log.naam === "Anoniem"
+                        ? "px-4 py-3 italic text-zinc-400"
+                        : "px-4 py-3 text-zinc-900"
+                    }
+                  >
+                    {log.naam}
+                  </td>
+                  <td className="px-4 py-3 text-zinc-700">
+                    {log.abonnementsnaam}
+                  </td>
+                  <td className="px-4 py-3 text-zinc-700">
+                    {formatteerDatumTijd(log.bezoekmoment)}
+                  </td>
+                  <td
+                    className={
+                      log.toegangVerleend
+                        ? "px-4 py-3 font-medium text-emerald-700"
+                        : "px-4 py-3 font-medium text-red-700"
+                    }
+                  >
+                    {log.toegangVerleend ? "Verleend" : "Geweigerd"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
@@ -249,5 +323,16 @@ function formatteerDatum(iso: string): string {
     day: "numeric",
     month: "long",
     year: "numeric",
+  });
+}
+
+/** ISO-tijdstip -> "14 september 2026 09:15" (lokale tijd). */
+function formatteerDatumTijd(iso: string): string {
+  return new Date(iso).toLocaleString("nl-NL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }

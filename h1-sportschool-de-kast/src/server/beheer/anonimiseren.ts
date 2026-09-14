@@ -3,7 +3,10 @@ import type {
   AnonimiseerPoort,
   AnonimiseerResultaat,
   AnonimiseerStatus,
+  BezoeklogWeergave,
 } from "./anonimiseren.types";
+
+const NAAM_GEMASKEERD = "Anoniem";
 
 /**
  * Haalt op hoeveel bezoeklogs van vóór de grens nog een lidnummer bevatten.
@@ -38,4 +41,30 @@ export async function anonimiseerOudeLogs(
 
   const aantal = await poort.anonimiseerTot(grens);
   return { status: "gedaan", aantal };
+}
+
+/**
+ * Haalt alle bezoeklogs op voor het overzicht op het beheerscherm.
+ *
+ * Een log toont "Anoniem" zodra het lid al geen `user_id` meer heeft, of
+ * zodra het bezoekmoment vóór de anonimiseringsgrens ligt — ook als de
+ * anonimisering zelf nog niet is uitgevoerd. Zo klopt het overzicht al vóór
+ * er op "Anonimiseren" is geklikt.
+ */
+export async function haalBezoeklogs(
+  poort: AnonimiseerPoort,
+  nu: Date = new Date(),
+): Promise<BezoeklogWeergave[]> {
+  const grens = anonimiseerGrens(nu);
+  const logs = await poort.haalBezoeklogs();
+  return logs.map((log) => ({
+    visitId: log.visitId,
+    naam:
+      log.naam === null || log.bezoekmoment < grens
+        ? NAAM_GEMASKEERD
+        : log.naam,
+    abonnementsnaam: log.abonnementsnaam,
+    bezoekmoment: log.bezoekmoment.toISOString(),
+    toegangVerleend: log.toegangVerleend,
+  }));
 }

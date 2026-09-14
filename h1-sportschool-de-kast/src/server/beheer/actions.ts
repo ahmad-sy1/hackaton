@@ -1,10 +1,15 @@
 "use server";
 
-import { anonimiseerOudeLogs, haalStatus } from "./anonimiseren";
+import {
+  anonimiseerOudeLogs,
+  haalBezoeklogs,
+  haalStatus,
+} from "./anonimiseren";
 import { drizzleAnonimiseerPoort } from "./queries";
 import type {
   AnonimiseerResultaat,
   AnonimiseerStatus,
+  BezoeklogWeergave,
 } from "./anonimiseren.types";
 
 /**
@@ -20,4 +25,8 @@ export async function statusOphalen(): Promise<AnonimiseerStatus> {
 
 export async function oudeLogsAnonimiseren(): Promise<AnonimiseerResultaat> {
   return anonimiseerOudeLogs(drizzleAnonimiseerPoort);
+}
+
+export async function bezoeklogsOphalen(): Promise<BezoeklogWeergave[]> {
+  return haalBezoeklogs(drizzleAnonimiseerPoort);
 }
