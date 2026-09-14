@@ -183,15 +183,14 @@ function Overzicht({
         </p>
       )}
 
-      {status.aantal > 0 && (
-        <button
-          type="button"
-          onClick={onAnonimiseren}
-          className="mt-8 w-full rounded-xl bg-zinc-900 py-5 text-xl font-semibold text-white"
-        >
-          Anonimiseren
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={onAnonimiseren}
+        disabled={status.aantal === 0}
+        className="mt-8 w-full rounded-xl bg-zinc-900 py-5 text-xl font-semibold text-white disabled:cursor-not-allowed disabled:bg-zinc-300"
+      >
+        Anonimiseren
+      </button>
 
       {logs.length > 0 && (
         <div className="mt-8 overflow-x-auto rounded-2xl border border-zinc-200">
