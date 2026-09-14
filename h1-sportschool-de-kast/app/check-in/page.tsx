@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import { checkIn } from "@/src/server/inchecken/actions";
@@ -62,7 +63,15 @@ export default function CheckInPagina() {
           <span className="text-2xl font-bold tracking-tight text-zinc-900">
             De Kast
           </span>
-          <span className="text-sm text-zinc-500">Kiosk · Ingang</span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-zinc-500">Kiosk · Ingang</span>
+            <Link
+              href="/abonnement"
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            >
+              Abonnement beheren
+            </Link>
+          </div>
         </header>
 
         {uitkomst?.status === "granted" && (
