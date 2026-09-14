@@ -83,7 +83,7 @@ export default function BeheerPagina() {
 
   return (
     <main className="flex min-h-dvh items-center justify-center bg-zinc-100 p-6">
-      <div className="w-full max-w-xl overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
+      <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
         <header className="flex items-center justify-between border-b border-zinc-200 px-8 py-5">
           <span className="text-2xl font-bold tracking-tight text-zinc-900">
             De Kast
