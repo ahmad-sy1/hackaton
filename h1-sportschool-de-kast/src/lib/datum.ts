@@ -1,6 +1,6 @@
 /**
- * Datumhelpers voor de weektelling van bezoeken (US-01) en de opzegtermijn
- * (US-02).
+ * Datumhelpers voor de weektelling van bezoeken (US-01), de opzegtermijn
+ * (US-02) en de anonimiseringsgrens van bezoeklogs.
  *
  * Grenzen zijn bewust lokale tijd, niet UTC: ze volgen de kalender aan de balie.
  * Er is geen tellerkolom en geen resetlogica; elke grens wordt bij aanroep
@@ -19,6 +19,20 @@ export function laatsteMaandag(moment: Date): Date {
   maandag.setDate(maandag.getDate() - dagenSindsMaandag);
   maandag.setHours(0, 0, 0, 0);
   return maandag;
+}
+
+/**
+ * Middernacht (lokale tijd), 14 dagen vóór `moment`.
+ *
+ * Grens voor het anonimiseren van bezoeklogs: een `visit_date` vóór dit
+ * moment komt in aanmerking. Lokale tijd, net als `laatsteMaandag`, zodat de
+ * grens aansluit bij de kalenderdag aan de balie in plaats van bij UTC.
+ */
+export function anonimiseerGrens(moment: Date): Date {
+  const grens = new Date(moment);
+  grens.setDate(grens.getDate() - 14);
+  grens.setHours(0, 0, 0, 0);
+  return grens;
 }
 
 /** Datum van `moment` als "YYYY-MM-DD" in lokale tijd. */
