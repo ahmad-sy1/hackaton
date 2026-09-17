@@ -1,5 +1,11 @@
 import { defineConfig } from "cypress";
-import { Pool } from "pg";
+import { Pool, types } from "pg";
+
+// DATE-kolommen (oid 1082) anders dan de pg-standaard: als kale "YYYY-MM-DD"
+// string teruggeven in plaats van een JS Date. Zo komt de waarde onveranderd
+// aan de specs door (geen tijdzoneshift, geen JSON-ronde die er een volledig
+// ISO-tijdstip van maakt) — precies zoals Drizzle het aan de app teruggeeft.
+types.setTypeParser(1082, (waarde) => waarde);
 
 export default defineConfig({
   e2e: {
