@@ -16,8 +16,7 @@ const MELDINGEN: Record<WeigerReden, string> = {
   ongeldige_inloggegevens: "Onjuist lidnummer of onjuiste pincode.",
   abonnement_verlopen:
     "Je abonnement is verlopen. Neem contact op met de balie.",
-  limiet_bereikt:
-    "Je hebt deze week het maximale aantal bezoeken van je abonnement bereikt.",
+  limiet_bereikt: "Je hebt je bezoeklimiet al bereikt voor deze week",
 };
 
 /**
