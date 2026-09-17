@@ -166,12 +166,12 @@ function Overzicht({
       </h1>
 
       {status.aantal > 0 ? (
-        <p className="mt-4 text-lg text-zinc-700">
+        <p data-testid="status-tekst" className="mt-4 text-lg text-zinc-700">
           <span className="font-semibold">{status.aantal}</span> bezoeklogs van
           vóór {formatteerDatum(status.grens)} bevatten nog een lidnummer.
         </p>
       ) : (
-        <p className="mt-4 text-lg text-zinc-600">
+        <p data-testid="status-tekst" className="mt-4 text-lg text-zinc-600">
           Er zijn geen bezoeklogs van vóór {formatteerDatum(status.grens)} met
           nog een lidnummer.
         </p>
@@ -185,6 +185,7 @@ function Overzicht({
 
       <button
         type="button"
+        data-testid="anonimiseren-knop"
         onClick={onAnonimiseren}
         disabled={status.aantal === 0}
         className="mt-8 w-full rounded-xl bg-zinc-900 py-5 text-xl font-semibold text-white disabled:cursor-not-allowed disabled:bg-zinc-300"
@@ -207,9 +208,11 @@ function Overzicht({
               {logs.map((log) => (
                 <tr
                   key={log.visitId}
+                  data-testid="tabel-rij"
                   className="border-b border-zinc-100 last:border-0"
                 >
                   <td
+                    data-testid="naam-cel"
                     className={
                       log.naam === "Anoniem"
                         ? "px-4 py-3 italic text-zinc-400"
@@ -272,6 +275,7 @@ function Bevestigen({
 
       <button
         type="button"
+        data-testid="bevestig-knop"
         onClick={onBevestig}
         disabled={bezig}
         className="mt-8 w-full rounded-xl bg-red-700 py-5 text-xl font-semibold text-white disabled:opacity-60"
@@ -307,6 +311,7 @@ function Klaar({ aantal, onTerug }: { aantal: number; onTerug: () => void }) {
 
       <button
         type="button"
+        data-testid="terug-naar-overzicht-knop"
         onClick={onTerug}
         className="mt-8 w-full rounded-xl border-2 border-zinc-300 py-4 text-lg font-semibold text-zinc-800 hover:bg-zinc-50"
       >
