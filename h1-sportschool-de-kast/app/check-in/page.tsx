@@ -101,6 +101,7 @@ export default function CheckInPagina() {
               )}
               <button
                 type="button"
+                data-testid="terug-naar-start-knop"
                 onClick={terugNaarStart}
                 className="mt-8 w-full rounded-xl border-2 border-zinc-300 py-5 text-xl font-semibold text-zinc-800 hover:bg-zinc-50"
               >
@@ -128,6 +129,7 @@ export default function CheckInPagina() {
                       "terug naar start", dus autoFocus werkt elke keer. */}
                   <input
                     id="lidnummer"
+                    data-testid="lidnummer-input"
                     autoFocus
                     value={lidnummer}
                     onChange={(e) =>
@@ -149,6 +151,7 @@ export default function CheckInPagina() {
                   </label>
                   <input
                     id="pincode"
+                    data-testid="pincode-input"
                     type="password"
                     value={pincode}
                     onChange={(e) =>
@@ -174,6 +177,7 @@ export default function CheckInPagina() {
 
               <button
                 type="submit"
+                data-testid="submit-knop"
                 disabled={bezig}
                 className="mt-8 w-full rounded-xl bg-zinc-900 py-5 text-xl font-semibold text-white disabled:opacity-60"
               >
