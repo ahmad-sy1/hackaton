@@ -39,7 +39,10 @@ function ToegangVerleend({
       : `nog ${Math.max(limiet - bezoekenDezeWeek, 0)} van ${limiet} bezoeken`;
 
   return (
-    <div className="grid gap-8 md:grid-cols-2 md:items-center">
+    <div
+      data-testid="welkomst-paneel"
+      className="grid gap-8 md:grid-cols-2 md:items-center"
+    >
       <div className="rounded-2xl bg-emerald-50 p-10 text-center">
         <div
           aria-hidden
@@ -78,7 +81,10 @@ function ToegangGeweigerd({ resultaat }: { resultaat: IncheckGeweigerd }) {
   const { kop, hulp } = WEIGER_WEERGAVE[resultaat.reden];
 
   return (
-    <div className="grid gap-8 md:grid-cols-2 md:items-center">
+    <div
+      data-testid="weigering-paneel"
+      className="grid gap-8 md:grid-cols-2 md:items-center"
+    >
       <div className="rounded-2xl bg-red-50 p-10 text-center">
         <div
           aria-hidden
@@ -90,8 +96,15 @@ function ToegangGeweigerd({ resultaat }: { resultaat: IncheckGeweigerd }) {
         <p className="mt-4 text-sm font-semibold tracking-wide text-red-700">
           REDEN
         </p>
-        <p className="text-xl font-medium text-red-900">{kop}</p>
-        <p className="mt-3 text-base text-red-800">{resultaat.melding}</p>
+        <p
+          data-testid="weiger-kop"
+          className="text-xl font-medium text-red-900"
+        >
+          {kop}
+        </p>
+        <p data-testid="weiger-melding" className="mt-3 text-base text-red-800">
+          {resultaat.melding}
+        </p>
       </div>
 
       <div className="rounded-2xl border border-zinc-200 p-8">

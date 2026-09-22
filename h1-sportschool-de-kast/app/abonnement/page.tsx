@@ -121,6 +121,7 @@ export default function AbonnementPagina() {
                   </label>
                   <input
                     id="lidnummer"
+                    data-testid="lidnummer-input"
                     autoFocus
                     value={lidnummer}
                     onChange={(e) =>
@@ -142,6 +143,7 @@ export default function AbonnementPagina() {
                   </label>
                   <input
                     id="pincode"
+                    data-testid="pincode-input"
                     type="password"
                     value={pincode}
                     onChange={(e) =>
@@ -167,6 +169,7 @@ export default function AbonnementPagina() {
 
               <button
                 type="submit"
+                data-testid="submit-knop"
                 disabled={bezig}
                 className="mt-8 w-full rounded-xl bg-zinc-900 py-5 text-xl font-semibold text-white disabled:opacity-60"
               >
@@ -240,7 +243,10 @@ function Overzicht({
         </div>
         <div className="flex justify-between gap-4 py-3">
           <dt className="text-zinc-500">Status</dt>
-          <dd className="font-semibold text-zinc-900">
+          <dd
+            data-testid="abonnement-status"
+            className="font-semibold text-zinc-900"
+          >
             {einddatum === null
               ? "Actief"
               : `Opgezegd — toegang t/m ${formatteerDatum(einddatum)}`}
@@ -257,6 +263,7 @@ function Overzicht({
       {einddatum === null ? (
         <button
           type="button"
+          data-testid="opzeggen-knop"
           onClick={onOpzeggen}
           className="mt-8 w-full rounded-xl border-2 border-red-300 py-5 text-xl font-semibold text-red-700 hover:bg-red-50"
         >
@@ -303,13 +310,14 @@ function Bevestigen({
           -abonnement op. Je toegang blijft werken tot het einde van de huidige
           maandcyclus; daarna vervalt de toegang automatisch.
         </p>
-        <p className="mt-3 text-lg">
+        <p data-testid="bevestig-tekst" className="mt-3 text-lg">
           Er wordt nog niets gewijzigd totdat je hieronder bevestigt.
         </p>
       </div>
 
       <button
         type="button"
+        data-testid="bevestig-knop"
         onClick={onBevestig}
         disabled={bezig}
         className="mt-8 w-full rounded-xl bg-red-700 py-5 text-xl font-semibold text-white disabled:opacity-60"
@@ -318,6 +326,7 @@ function Bevestigen({
       </button>
       <button
         type="button"
+        data-testid="annuleer-knop"
         onClick={onAnnuleren}
         disabled={bezig}
         className="mt-4 w-full rounded-xl border-2 border-zinc-300 py-4 text-lg font-semibold text-zinc-800 hover:bg-zinc-50 disabled:opacity-60"
@@ -346,7 +355,7 @@ function Opgezegd({
       <h1 className="mt-6 text-3xl font-bold text-zinc-900">
         Je abonnement is opgezegd
       </h1>
-      <p className="mt-3 text-lg text-zinc-600">
+      <p data-testid="opgezegd-bericht" className="mt-3 text-lg text-zinc-600">
         Je toegang blijft geldig tot en met{" "}
         <span className="font-semibold text-zinc-900">
           {formatteerDatum(einddatum)}
