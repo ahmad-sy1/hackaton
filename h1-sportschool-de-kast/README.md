@@ -1,24 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sportschool De Kast
 
-## Getting Started
+Webapplicatie voor Sportschool De Kast (Hackathon 1, kernflow US-01 + US-02). De app heeft drie
+schermen:
 
-First, run the development server:
+| Scherm          | Route         | Wat het doet                                                                                                                                                                                                                                               |
+| --------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Inchecken       | `/check-in`   | Een lid checkt bij de ingang in met lidnummer en pincode. Toegang hangt af van het abonnementstype (maximaal aantal bezoeken per week, telling vanaf maandag) en van een eventuele einddatum. Elke poging van een bekend lid wordt gelogd in `visit_logs`. |
+| Mijn abonnement | `/abonnement` | Een lid logt in met lidnummer en pincode, bekijkt zijn abonnement en kan het opzeggen. Na bevestiging loopt de toegang door tot het einde van de lopende maandcyclus.                                                                                      |
+| Beheer          | `/beheer`     | Een medewerker anonimiseert bezoeklogs ouder dan 14 dagen (AVG): het lidnummer wordt losgekoppeld, het abonnementstype blijft staan. Dit scherm heeft (bewust) nog geen login, zie het testrapport.                                                        |
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+De startpagina `/` linkt naar deze drie schermen.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js** (App Router) met **TypeScript** (strict) en **server actions**: geen aparte backend
+- **PostgreSQL 17** in Docker, met **Drizzle ORM** voor schema, migraties en queries
+- **Tailwind CSS** voor de opmaak
+- **bcryptjs** voor het hashen van pincodes
+- **Cypress** voor end-to-end-tests
+- **ESLint**, **Prettier** en `tsc` voor codekwaliteit
 
 ## Projectstructuur
 
@@ -26,147 +26,157 @@ Drie lagen, elk met een eigen plek:
 
 ```
 app/                      # FRONTEND — routing en UI (Next.js App Router)
-  layout.tsx, page.tsx    #   pagina's en layouts
-  _components/            #   gedeelde componenten (niet routeerbaar door de _)
+  page.tsx                #   startpagina met links naar de schermen
+  check-in/               #   incheckscherm (US-01)
+  abonnement/             #   abonnement bekijken en opzeggen (US-02)
+  beheer/                 #   bezoeklogs anonimiseren
 
 src/
   db/                     # DATABASE — alles bij elkaar
-    schema/              #   één bestand per tabel + index.ts (barrel)
+    schema/               #   één bestand per tabel + index.ts (barrel)
       subscriptions.ts
       users.ts
       visit-logs.ts
-    migrations/          #   gegenereerde SQL + meta/ (snapshots per migratie)
-    index.ts            #   de Drizzle-client (import { db } from "@/src/db")
-    seed.ts            #   testdata
-  server/                # BACKEND — server actions per feature
-    <feature>/actions.ts  #   "use server", mutaties
-    <feature>/queries.ts  #   Drizzle-reads (geen raw SQL in componenten)
-  lib/                    # helpers zonder laag-binding (pin-hashing, datums)
+    migrations/           #   gegenereerde SQL + meta/ (snapshots per migratie)
+    index.ts              #   de Drizzle-client (import { db } from "@/src/db")
+    seed.ts               #   testdata (M1 t/m M8)
+  server/                 # BACKEND — server actions per feature
+    <feature>/actions.ts  #   "use server", de ingang vanuit de UI
+    <feature>/queries.ts  #   Drizzle-queries (geen raw SQL in componenten)
+    <feature>/*.ts        #   businessregels, los van de database via een poort-interface
+  lib/                    # helpers zonder laag-binding (datums)
 
-src/db/migrations/        # inlevermomenten van het schema; nooit met de hand wijzigen
-drizzle.config.ts         # wijst schema -> src/db/schema, out -> src/db/migrations
+cypress/
+  e2e/                    # specs: inchecken, abonnement, integratie, beheer
+  support/                # helpers voor database-queries en datumberekening
+
+docs/testen/              # testplan, testrapport en acceptatietest
 ```
 
 Nieuwe tabel: nieuw bestand in `src/db/schema/`, toevoegen aan `schema/index.ts`,
 dan `npm run db:generate`. Nieuwe backend-functionaliteit: map onder `src/server/`.
 Nieuw scherm: route-map onder `app/`.
 
+## Installeren en starten
+
+Alle commando's draai je in de map `h1-sportschool-de-kast/`, niet in de root van de repo.
+
+Vereist: Node.js, npm en Docker.
+
+```bash
+npm install
+cp .env.example .env      # in h1-sportschool-de-kast/, niet in de root van de repo
+npm run db:up             # start PostgreSQL (container dekast-db) en wacht op de healthcheck
+npm run db:migrate        # voert de migraties uit src/db/migrations/ uit
+npm run db:seed           # vult de database met de testleden M1 t/m M8
+npm run dev               # start de app op http://localhost:3000
+```
+
+De standaardwaarden in `.env.example` passen bij `docker-compose.yml`. In `.env` staan twee
+variabelen:
+
+| Variabele           | Waarvoor                                                       |
+| ------------------- | -------------------------------------------------------------- |
+| `DATABASE_URL`      | De database waarmee de app (en `db:migrate` / `db:seed`) werkt |
+| `DATABASE_URL_TEST` | De aparte testdatabase `dekast_test` voor Cypress              |
+
+`.env` staat in `.gitignore` en wordt nooit gecommit.
+
+Stoppen met `npm run db:down`: de data blijft bewaard in het volume `dekast-db-data`.
+`npm run db:reset` wist de database en bouwt hem schoon opnieuw op (**alle data weg**).
+
 ## Commando's
 
-Alles loopt via `npm run <script>`; je hoeft geen losse `npx`-commando's te
-onthouden. Draai **`npm run check`** vóór elke commit.
+Draai **`npm run check`** vóór elke commit.
 
-| Script                 | Wat het doet                                                  | Wanneer                                                         |
-| ---------------------- | ------------------------------------------------------------- | --------------------------------------------------------------- |
-| `npm run dev`          | Start de Next.js-dev-server                                   | Tijdens ontwikkelen                                             |
-| `npm run build`        | Productie-build                                               | Vóór deploy of om de build te controleren                       |
-| `npm run start`        | Draait de productie-build                                     | Na `npm run build`                                              |
-| `npm run lint`         | ESLint                                                        | Code controleren op fouten                                      |
-| `npm run lint:fix`     | ESLint met `--fix`                                            | Automatisch oplosbare lint-fouten wegwerken                     |
-| `npm run format`       | Prettier over het hele project schrijven                      | Opmaak toepassen                                                |
-| `npm run format:check` | Prettier alleen controleren                                   | In CI / onderdeel van `check`                                   |
-| `npm run typecheck`    | `tsc --noEmit`                                                | Types controleren zonder te builden                             |
-| `npm run check`        | `format:check` + `lint` + `typecheck`                         | **Vóór elke commit**                                            |
-| `npm run db:up`        | `docker compose up -d --wait` (wacht op de healthcheck)       | Database starten                                                |
-| `npm run db:down`      | `docker compose down` (data blijft in het volume)             | Database stoppen                                                |
-| `npm run db:logs`      | Volgt de logs van de `db`-service                             | Meekijken met Postgres                                          |
-| `npm run db:generate`  | Nieuwe migratie genereren uit het schema                      | Na een schemawijziging                                          |
-| `npm run db:migrate`   | Migraties uitvoeren                                           | Database naar de laatste stand brengen                          |
-| `npm run db:studio`    | Drizzle Studio openen                                         | Data bekijken in de browser                                     |
-| `npm run db:seed`      | Testdata inladen (`src/db/seed.ts`)                           | Lege database vullen                                            |
-| `npm run db:reset`     | `docker compose down -v` → `db:up` → `db:migrate` → `db:seed` | Schone herstart. **Wist alle data** (`-v` gooit het volume weg) |
+| Script                                    | Wat het doet                                             |
+| ----------------------------------------- | -------------------------------------------------------- |
+| `npm run dev`                             | Start de Next.js-dev-server                              |
+| `npm run build` / `npm run start`         | Productie-build maken en draaien                         |
+| `npm run lint` / `npm run lint:fix`       | ESLint (met `--fix`: automatisch oplossen)               |
+| `npm run format` / `npm run format:check` | Prettier schrijven / alleen controleren                  |
+| `npm run typecheck`                       | Route-types genereren en `tsc --noEmit`                  |
+| `npm run check`                           | `format:check` + `lint` + `typecheck`                    |
+| `npm run db:up` / `npm run db:down`       | Database-container starten / stoppen                     |
+| `npm run db:logs`                         | Logs van de database volgen                              |
+| `npm run db:generate`                     | Nieuwe migratie genereren na een schemawijziging         |
+| `npm run db:migrate`                      | Migraties uitvoeren                                      |
+| `npm run db:studio`                       | Drizzle Studio openen                                    |
+| `npm run db:seed`                         | Testdata inladen (`src/db/seed.ts`)                      |
+| `npm run db:reset`                        | Database wissen en opnieuw opbouwen (**wist alle data**) |
+| `npm run cy:open` / `npm run cy:run`      | Cypress interactief / headless                           |
 
 ## Database
 
-De datalaag draait op PostgreSQL met [Drizzle ORM](https://orm.drizzle.team).
 Het schema staat in `src/db/schema/` (één bestand per tabel), de client in `src/db/index.ts`.
+Bij elke schemawijziging hoort een migratie (`npm run db:generate`). Een al gecommitte migratie
+pas je niet aan; je schrijft een nieuwe.
 
-Elke keer dat een tabelbestand wordt aangemaakt of gewijzigd: tabel toevoegen aan
-`src/db/schema/index.ts` en daarna **`npm run db:generate`** draaien. Bij elke
-schemawijziging hoort een migratie.
+| Tabel           | Doel                                                                                                                                      |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `Subscriptions` | De abonnementstypen (Basis, Plus, Premium). `subscription_limit` is het maximum aantal bezoeken per week.                                 |
+| `Users`         | De leden: gegevens, een verwijzing naar het abonnementstype en `pin_hash` (de bcrypt-hash van de pincode, nooit de pincode zelf).         |
+| `visit_logs`    | Elke toegangspoging van een bekend lid, geslaagd (`access_granted = true`) én geweigerd (`false`), met het abonnementstype op dat moment. |
 
-### Tabellen
-
-| Tabel           | Doel                                                                                                                                                                    |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Subscriptions` | De abonnementstypen (Basis, Plus, Premium). `subscription_limit` is het maximum aantal bezoeken per week.                                                               |
-| `Users`         | De leden. Bevat NAW-gegevens, een verwijzing naar het abonnementstype, en `pin_hash` (de bcrypt-hash van de pincode, nooit de pincode zelf).                            |
-| `visit_logs`    | Elke toegangspoging bij de deur, geslaagd (`access_granted = true`) én geweigerd (`false`). `subscription_type_id` legt vast met welk abonnementstype er is aangeklopt. |
-
-### NULL-conventies
+NULL-conventies:
 
 - `Subscriptions.subscription_limit` **NULL** = onbeperkt aantal bezoeken (Premium).
-- `Users.subscription_end` **NULL** = het abonnement is niet opgezegd. Staat er wél
-  een datum, dan is er opgezegd en loopt het abonnement door tot die datum.
+- `Users.subscription_end` **NULL** = niet opgezegd. Staat er een datum, dan is er opgezegd en
+  geeft het abonnement toegang tot en met die datum.
+- `visit_logs.user_id` **NULL** = geanonimiseerd. `subscription_type_id` blijft staan, zodat
+  zichtbaar blijft welk abonnementstype er langskwam, zonder te weten wie het was.
 
-### Waarom is `visit_logs.user_id` nullable?
+Het aantal bezoeken per week is geen kolom. Het wordt bij elke incheck geteld in `visit_logs`,
+vanaf maandag 00:00.
 
-Bezoeklogs worden na 14 dagen geanonimiseerd: `user_id` wordt dan op NULL gezet
-(de foreign key staat op `ON DELETE set null`). `subscription_type_id` blijft
-staan, zodat de sportschool nog kan zien wélk abonnementstype er langskwam zonder
-te weten wie het was.
+## Testen
 
-### Lokaal opstarten
+De end-to-end-tests (TC-01 t/m TC-15) staan in `cypress/e2e/`. Elke test vult de testdatabase
+vóór en na de test opnieuw via `cy.task("seed")`. De tests raken de ontwikkeldatabase dus niet.
 
-Er is geen kant-en-klare database; je draait er zelf een. De meegeleverde
-`docker-compose.yml` start een PostgreSQL 17 met vaste gegevens:
+**Belangrijk:** Cypress zet de testdatabase alleen voor zijn eigen proces (seed en
+database-controles). De app draait in een apart proces en moet zelf ook met de testdatabase
+gestart worden. Anders praten de seed en de app met verschillende databases en falen de tests.
 
-|              |          |
-| ------------ | -------- |
-| gebruiker    | `dekast` |
-| wachtwoord   | `dekast` |
-| databasenaam | `dekast` |
-| poort        | `5432`   |
-
-Deze komen exact overeen met de `DATABASE_URL` in `.env.example`, dus na kopiëren
-werkt het meteen:
+Eenmalig: de testdatabase aanmaken en migreren.
 
 ```bash
-cp .env.example .env      # standaardwaarde past al bij docker-compose.yml
-npm run db:up             # start PostgreSQL en wacht op de healthcheck
-npm run db:migrate        # voert src/db/migrations/0000_init.sql uit
-npm run db:seed           # vult de database met testdata
+docker exec dekast-db createdb -U dekast dekast_test
+DATABASE_URL="$(grep '^DATABASE_URL_TEST=' .env | cut -d= -f2-)" npm run db:migrate
 ```
 
-Stoppen met `npm run db:down` (data blijft bewaard in het volume
-`dekast-db-data`); `docker compose down -v` wist ook de data. `npm run db:reset`
-doet dat laatste voor je en bouwt de database daarna schoon opnieuw op —
-**dat wist dus alle data**.
+Tests draaien, in twee terminals:
 
-Geen Docker? Dan zet je zelf een PostgreSQL op (bijv. Postgres.app of Homebrew),
-maak je een lege database aan en pas je `DATABASE_URL` in `.env` aan naar
-`postgres://<user>:<wachtwoord>@<host>:<poort>/<databasenaam>`.
+```bash
+# terminal 1: app tegen de testdatabase
+DATABASE_URL="$(grep '^DATABASE_URL_TEST=' .env | cut -d= -f2-)" npm run dev
 
-Overige scripts: `npm run db:generate` (nieuwe migratie genereren uit het schema)
-en `npm run db:studio` (Drizzle Studio).
+# terminal 2: alle specs headless
+npm run cy:run
+```
 
-### Testleden
+Er kan maar één Next-dev-server tegelijk draaien in deze map. Stop dus eerst een dev-server die
+tegen de ontwikkeldatabase draait.
 
-Alle testleden hebben pincode **1234** (alleen voor de dev-omgeving).
+Testplan, testrapport en acceptatietest staan in [`docs/testen/`](docs/testen/).
 
-| Lid            | Abonnement          | Situatie in de seed                                      | Dekt af                                                                              |
-| -------------- | ------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Sanne de Vries | Basis (1/week)      | Laatste bezoek was vorige week                           | Weekteller reset op maandag: vorige week telt niet mee, Sanne mag er weer in         |
-| Mo El Amrani   | Basis (1/week)      | Deze week al één geslaagd bezoek + één geweigerde poging | Weeklimiet bereikt → volgende poging wordt geweigerd én de weigering wordt gelogd    |
-| Youssef Bakker | Plus (2/week)       | Deze week één bezoek                                     | Nog ruimte binnen de weeklimiet → toegang wordt verleend                             |
-| Lisa Jansen    | Premium (onbeperkt) | Drie bezoeken deze week                                  | `subscription_limit` NULL → nooit geweigerd op aantal                                |
-| Karim Yilmaz   | Plus (2/week)       | `subscription_end` in de toekomst                        | US-02: opgezegd abonnement dat nog doorloopt tot de vervaldatum → nog steeds toegang |
-| Nadia Peters   | Basis (1/week)      | Bezoeklog van 21 dagen oud                               | Testcase voor de anonimiseerknop (logs ouder dan 14 dagen)                           |
+## Testleden
 
-Daarnaast bevat de seed één al geanonimiseerde bezoeklog (`user_id` NULL,
-`subscription_type_id` bewaard) als voorbeeld van de eindtoestand na anonimisering.
+De seed (`src/db/seed.ts`) maakt acht testleden aan. De lidnummers liggen vast, omdat de seed
+de tabellen leegmaakt met `RESTART IDENTITY`. Alle datums worden berekend ten opzichte van de dag
+waarop de seed draait. De pincode staat in `src/db/seed.ts`; alleen voor de dev- en
+testomgeving.
 
-## Learn More
+| Profiel | Lidnummer | Abonnement          | Situatie                                                                                                                            |
+| ------- | --------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| M1      | 1         | Plus (2 per week)   | 0 bezoeken deze week, niet opgezegd, startdatum op de 5e van de maand. Heeft één bezoeklog van 21 dagen oud (voor het anonimiseren) |
+| M2      | 2         | Plus (2 per week)   | 2 geslaagde bezoeken deze week: limiet bereikt                                                                                      |
+| M3      | 3         | Plus (2 per week)   | 1 geslaagd bezoek deze week: nog ruimte                                                                                             |
+| M4      | 4         | Premium (onbeperkt) | 3 geslaagde bezoeken deze week                                                                                                      |
+| M5      | 5         | Plus (2 per week)   | 2 geslaagde bezoeken vóór afgelopen maandag, 0 deze week                                                                            |
+| M6      | 6         | Plus (2 per week)   | Opgezegd, einddatum over 12 dagen: heeft nog toegang                                                                                |
+| M7      | 7         | Plus (2 per week)   | Opgezegd, einddatum was gisteren: abonnement verlopen                                                                               |
+| M8      | 8         | Plus (2 per week)   | Startdatum op dezelfde dag van de maand als vandaag, niet opgezegd                                                                  |
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Daarnaast bevat de seed één al geanonimiseerde bezoeklog (40 dagen oud, `user_id` NULL). Het
+abonnementstype Basis (1 per week) bestaat wel, maar geen enkel testlid gebruikt het.
