@@ -1,0 +1,327 @@
+# Testrapport Sportschool De Kast (Hackathon 1, fase 3)
+
+|               |                                                                                                                                                                                              |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Werkproces    | B1-K1-W4: Test software                                                                                                                                                                      |
+| Kernflow      | US-01 (Toegang op abonnementstype) + US-02 (Abonnement annuleren)                                                                                                                            |
+| Datum testrun | 22 september 2026, 12:29:09–12:29:33 (CEST)                                                                                                                                                  |
+| Commit        | `f4000f5dbc12f77fddd8db0b865b4bda57127f0a` (branch `docs/documentation`, gebaseerd op `e6dd614`)                                                                                             |
+| Uitvoerder    | Ahmad Alasmi                                                                                                                                                                                 |
+| Testomgeving  | macOS, Node v24.20.0, Next.js 16.3.4 (dev-server, `DATABASE_URL` naar de testdatabase `dekast_test`), PostgreSQL 17 in Docker-container `dekast-db`, Cypress 16.1.0, Electron 146 (headless) |
+| Testplan      | [De Kast - Testplan.docx](./De%20Kast%20-%20Testplan.docx) (14 september 2026)                                                                                                               |
+
+Nummering van testcases, acceptatiecriteria (AC-01.1 t/m AC-02.4, NF-01 t/m NF-03) en
+seedprofielen (M1 t/m M8) volgt het testplan.
+
+**Hoe te lezen.** Alle vijftien testcases zijn geautomatiseerd uitgevoerd met `npx cypress run`.
+Per stap is nagegaan of de Cypress-spec die stap echt controleert, via een assertion of een
+`cy.task`-query. Stappen die de spec niet controleert, staan als
+"Niet geautomatiseerd – [HANDMATIG CONTROLEREN]" in het rapport. Die stappen zijn in deze run dus
+**niet** getoetst.
+
+## 1. Samenvatting
+
+|                                                                    | Aantal                     |
+| ------------------------------------------------------------------ | -------------------------- |
+| Testcases in het testplan                                          | 15                         |
+| Uitgevoerd (Cypress)                                               | 15                         |
+| Geslaagd (Cypress)                                                 | 15                         |
+| Gefaald (Cypress)                                                  | 0                          |
+| Overgeslagen                                                       | 0                          |
+| Teststappen met status "[HANDMATIG CONTROLEREN]" (geheel of deels) | 17                         |
+| Teststappen met een afwijking van de testplanverwachting           | 1 (TC-08 stap 5, zie §5.3) |
+
+Cypress-uitvoer per spec:
+
+| Spec               | Tests  | Geslaagd | Gefaald | Duur      |
+| ------------------ | ------ | -------- | ------- | --------- |
+| `abonnement.cy.ts` | 4      | 4        | 0       | 00:04     |
+| `beheer.cy.ts`     | 2      | 2        | 0       | 864 ms    |
+| `inchecken.cy.ts`  | 7      | 7        | 0       | 00:06     |
+| `integratie.cy.ts` | 2      | 2        | 0       | 00:02     |
+| **Totaal**         | **15** | **15**   | **0**   | **00:14** |
+
+## 2. Testcases
+
+Voor alle testcases geldt: "Test uitgevoerd door" is Ahmad Alasmi en "Test uitgevoerd op" is
+22-09-2026. Specs staan in `cypress/e2e/`. Regelnummers verwijzen naar commit `f4000f5`.
+
+### TC-01 | Geldige incheck wordt toegekend en gelogd
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-01.3, AC-01.5 ·
+Test status: **Geslaagd (Cypress); stap 2, 3 en 4 deels handmatig te controleren**
+
+| Stap | Test stap                                             | Verwacht resultaat                                                                                           | Werkelijk resultaat                                                                                                                                                                               | Geslaagd/niet geslaagd  |
+| ---- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1    | Ga naar het incheckscherm                             | Het formulier met lidnummer en pincode wordt zonder fouten weergegeven                                       | Conform verwacht (assertie in `inchecken.cy.ts:13` en `:16`: de velden accepteren invoer). Let op: de spec bezoekt `/check-in`, het testplan noemt `http://localhost:3000/`                       | Geslaagd                |
+| 2    | Vul het lidnummer en de juiste pincode in en bevestig | Welkomstscherm met de naam van het lid                                                                       | Welkomstscherm: conform verwacht (assertie in `inchecken.cy.ts:28`). Naam van het lid: niet geautomatiseerd – [HANDMATIG CONTROLEREN]                                                             | Geslaagd (deels)        |
+| 3    | Controleer de database op een nieuwe logregel         | Eén nieuw record met user_id van M1, actuele timestamp, gevuld subscription_type_id en access_granted = true | Eén nieuw record van M1 met access_granted = true: conform verwacht (cy.task-query in `inchecken.cy.ts:30–32`). Timestamp en subscription_type_id: niet geautomatiseerd – [HANDMATIG CONTROLEREN] | Geslaagd (deels)        |
+| 4    | Wacht tot de aftelbalk is afgelopen                   | Het scherm keert automatisch terug naar het incheckformulier                                                 | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]                                                                                                                                                    | [HANDMATIG CONTROLEREN] |
+
+### TC-02 | Onjuiste pincode wordt geweigerd en gelogd
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-01.5 · Test status: **Geslaagd**
+
+| Stap | Test stap                                                        | Verwacht resultaat                                                                     | Werkelijk resultaat                                                                                                              | Geslaagd/niet geslaagd |
+| ---- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 1    | Vul het lidnummer van M1 in met een onjuiste pincode en bevestig | Weigeringsscherm met een neutrale melding die niet prijsgeeft of het lidnummer bestaat | Conform verwacht (assertie in `inchecken.cy.ts:40–41`: weigeringsscherm met de melding "Onjuist lidnummer of onjuiste pincode.") | Geslaagd               |
+| 2    | Noteer de exacte tekst van de melding                            | Tekst vastgelegd voor vergelijking met TC-03                                           | Conform verwacht (assertie in `inchecken.cy.ts:41`: exacte tekst "Onjuist lidnummer of onjuiste pincode.")                       | Geslaagd               |
+| 3    | Controleer de database op een nieuwe logregel                    | Eén nieuw record met user_id van M1 en access_granted = false                          | Conform verwacht (cy.task-query in `inchecken.cy.ts:46–48`)                                                                      | Geslaagd               |
+
+### TC-03 | Onbekend lidnummer geeft dezelfde melding en geen logregel
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-01.5 (met onderbouwde afwijking, zie
+§5.1) · Test status: **Geslaagd**
+
+| Stap | Test stap                                                     | Verwacht resultaat                                     | Werkelijk resultaat                                                                        | Geslaagd/niet geslaagd |
+| ---- | ------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ---------------------- |
+| 1    | Tel het aantal records in visit_logs                          | Aantal genoteerd als beginstand                        | Conform verwacht (cy.task-query in `inchecken.cy.ts:54`)                                   | Geslaagd               |
+| 2    | Vul lidnummer 999 met een willekeurige pincode in en bevestig | Weigeringsscherm met exact dezelfde tekst als in TC-02 | Conform verwacht (assertie in `inchecken.cy.ts:56–57`: dezelfde exacte tekst als in TC-02) | Geslaagd               |
+| 3    | Tel het aantal records opnieuw                                | Aantal is ongewijzigd ten opzichte van stap 1          | Conform verwacht (cy.task-query in `inchecken.cy.ts:62–63`)                                | Geslaagd               |
+
+### TC-04 | Bereikte bezoeklimiet wordt geweigerd met de voorgeschreven melding
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-01.2 ·
+Test status: **Geslaagd (Cypress); stap 2 handmatig te controleren**
+
+| Stap | Test stap                                                          | Verwacht resultaat                                                               | Werkelijk resultaat                                                                                                 | Geslaagd/niet geslaagd  |
+| ---- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1    | Check in met het lidnummer en de juiste pincode van M2             | Weigeringsscherm met de tekst: Je hebt je bezoeklimiet al bereikt voor deze week | Conform verwacht (assertie in `inchecken.cy.ts:71–72`: exacte tekst). Screenshot `TC-04-limiet-bereikt.png` gemaakt | Geslaagd                |
+| 2    | Controleer of het scherm vermeldt wanneer het lid weer terecht kan | De verwijzing naar het volgende geldige moment is zichtbaar                      | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]                                                                      | [HANDMATIG CONTROLEREN] |
+| 3    | Controleer de database                                             | Eén nieuw record met access_granted = false; geen record met true                | Conform verwacht (cy.task-query in `inchecken.cy.ts:78–81`)                                                         | Geslaagd                |
+
+### TC-05 | Eén bezoek onder de limiet geeft toegang
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-01.3 ·
+Test status: **Geslaagd (Cypress); stap 2 handmatig te controleren**
+
+| Stap | Test stap                              | Verwacht resultaat                                             | Werkelijk resultaat                                 | Geslaagd/niet geslaagd  |
+| ---- | -------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------- | ----------------------- |
+| 1    | Check in met de juiste gegevens van M3 | Toegang verleend met welkomstmelding                           | Conform verwacht (assertie in `inchecken.cy.ts:90`) | Geslaagd                |
+| 2    | Check direct daarna nogmaals in met M3 | Weigering wegens bereikte limiet, want de teller staat nu op 2 | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]      | [HANDMATIG CONTROLEREN] |
+
+### TC-06 | Onbeperkt abonnement krijgt nooit een weigermelding
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-01.4 ·
+Test status: **Geslaagd (Cypress); stap 2 en 3 handmatig te controleren**
+
+| Stap | Test stap                                                 | Verwacht resultaat                                  | Werkelijk resultaat                                                                                                                      | Geslaagd/niet geslaagd  |
+| ---- | --------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1    | Check in met de juiste gegevens van M4                    | Toegang verleend met welkomstmelding                | Conform verwacht (assertie in `inchecken.cy.ts:95`)                                                                                      | Geslaagd                |
+| 2    | Controleer het scherm op een weigermelding of limiettekst | Geen enkele weigermelding of limiettekst zichtbaar  | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]                                                                                           | [HANDMATIG CONTROLEREN] |
+| 3    | Controleer het abonnementstype in de database             | subscription_limit is NULL voor dit abonnementstype | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]. Let op: de tabel heet `"Subscriptions"`, niet `subscription_types` zoals in het testplan | [HANDMATIG CONTROLEREN] |
+
+### TC-07 | De bezoekteller reset op maandag
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-01.1 ·
+Test status: **Geslaagd (Cypress); stap 2 en 3 handmatig te controleren**
+
+| Stap | Test stap                              | Verwacht resultaat                                                         | Werkelijk resultaat                                  | Geslaagd/niet geslaagd  |
+| ---- | -------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------- | ----------------------- |
+| 1    | Check in met de juiste gegevens van M5 | Toegang verleend; de bezoeken van vorige week tellen niet mee              | Conform verwacht (assertie in `inchecken.cy.ts:100`) | Geslaagd                |
+| 2    | Check een tweede keer in met M5        | Toegang verleend; dit is het tweede bezoek van deze week                   | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]       | [HANDMATIG CONTROLEREN] |
+| 3    | Check een derde keer in met M5         | Weigering wegens bereikte limiet; de bezoeken van deze week tellen wél mee | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]       | [HANDMATIG CONTROLEREN] |
+
+### TC-08 | Volledige opzegflow met correcte einddatum
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-02.1, AC-02.2, AC-02.3, AC-02.4 ·
+Test status: **Geslaagd (Cypress); stap 1 en 3 handmatig te controleren; stap 5 wijkt af van het testplan (§5.3)**
+
+| Stap | Test stap                                                       | Verwacht resultaat                                                                   | Werkelijk resultaat                                                                                                                                                                                                                                                 | Geslaagd/niet geslaagd               |
+| ---- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| 1    | Log in op het abonnementsscherm met lidnummer en pincode van M1 | Het overzicht toont het abonnementstype en de status actief                          | Niet geautomatiseerd – [HANDMATIG CONTROLEREN] (de spec klikt op de opzegknop, maar controleert abonnementstype en status niet)                                                                                                                                     | [HANDMATIG CONTROLEREN]              |
+| 2    | Klik op opzeggen                                                | Bevestigingsscherm met de tekst dat er nog niets wordt gewijzigd totdat je bevestigt | Conform verwacht (assertie in `abonnement.cy.ts:38`: "Er wordt nog niets gewijzigd totdat je hieronder bevestigt.")                                                                                                                                                 | Geslaagd                             |
+| 3    | Controleer de database vóór bevestiging                         | subscription_end is nog steeds NULL                                                  | Niet geautomatiseerd – [HANDMATIG CONTROLEREN] (de spec leest `subscription_end` pas ná bevestiging)                                                                                                                                                                | [HANDMATIG CONTROLEREN]              |
+| 4    | Bevestig de opzegging                                           | Bevestigingsbericht met de datum tot wanneer de toegang geldig blijft                | Conform verwacht (assertie in `abonnement.cy.ts:43`: het bericht bevat de einddatum)                                                                                                                                                                                | Geslaagd                             |
+| 5    | Controleer de database na bevestiging                           | subscription_end is gevuld met de eerstvolgende 5e van de maand                      | subscription_end is gevuld met de **dag vóór** de eerstvolgende 5e (in deze run 2026-10-04 in plaats van 2026-10-05). De spec controleert die waarde (cy.task-query in `abonnement.cy.ts:48–49`) en is groen, maar dat is niet de waarde uit het testplan. Zie §5.3 | Afwijking t.o.v. testplan – zie §5.3 |
+
+### TC-09 | Terugkeren zonder bevestigen wijzigt niets
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-02.1, AC-02.2 ·
+Test status: **Geslaagd (Cypress); stap 2 deels handmatig te controleren**
+
+| Stap | Test stap                                          | Verwacht resultaat                                                    | Werkelijk resultaat                                                                                                                                          | Geslaagd/niet geslaagd |
+| ---- | -------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
+| 1    | Log in en klik op opzeggen                         | Het bevestigingsscherm verschijnt                                     | Conform verwacht (impliciete bestaanscontrole: `cy.get(...).click()` op de annuleerknop in `abonnement.cy.ts:57` faalt als het bevestigingsscherm ontbreekt) | Geslaagd               |
+| 2    | Keer terug naar het overzicht zonder te bevestigen | Het overzicht toont de status actief en de opzegknop is nog zichtbaar | Opzegknop zichtbaar: conform verwacht (assertie in `abonnement.cy.ts:58`). Status "actief": niet geautomatiseerd – [HANDMATIG CONTROLEREN]                   | Geslaagd (deels)       |
+| 3    | Controleer de database                             | subscription_end is nog steeds NULL                                   | Conform verwacht (cy.task-query in `abonnement.cy.ts:60–61`)                                                                                                 | Geslaagd               |
+
+### TC-10 | Opzeggen op de verlengdag zelf geeft een extra cyclus
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-02.3 · Test status: **Geslaagd**
+
+| Stap | Test stap                              | Verwacht resultaat                                    | Werkelijk resultaat                                                                                                                                                         | Geslaagd/niet geslaagd |
+| ---- | -------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 1    | Log in, zeg op en bevestig             | Bevestigingsbericht met een einddatum                 | Conform verwacht (assertie in `abonnement.cy.ts:77`)                                                                                                                        | Geslaagd               |
+| 2    | Controleer de einddatum in de database | subscription_end ligt een maand vooruit, niet vandaag | Conform verwacht (cy.task-query in `abonnement.cy.ts:82–83`). In deze run was de einddatum 2026-10-21: de dag vóór de verlengdag 22 oktober, dus niet vandaag. Zie ook §5.3 | Geslaagd               |
+
+### TC-11 | Een al opgezegd abonnement kan niet opnieuw worden opgezegd
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-02.1, AC-02.4 · Test status: **Geslaagd**
+
+| Stap | Test stap                              | Verwacht resultaat                                                              | Werkelijk resultaat                                          | Geslaagd/niet geslaagd |
+| ---- | -------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------ | ---------------------- |
+| 1    | Noteer de huidige einddatum van M6     | Waarde genoteerd als beginstand                                                 | Conform verwacht (cy.task-query in `abonnement.cy.ts:89`)    | Geslaagd               |
+| 2    | Log in op het abonnementsscherm met M6 | Het overzicht toont de status opgezegd met de einddatum; de opzegknop ontbreekt | Conform verwacht (assertie in `abonnement.cy.ts:91–92`)      | Geslaagd               |
+| 3    | Controleer de einddatum opnieuw        | Ongewijzigd ten opzichte van stap 1                                             | Conform verwacht (cy.task-query in `abonnement.cy.ts:97–98`) | Geslaagd               |
+
+### TC-12 | Opgezegd lid houdt toegang tot de einddatum
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-02.3, AC-01.3 ·
+Test status: **Geslaagd (Cypress); stap 2 handmatig te controleren**
+
+| Stap | Test stap                              | Verwacht resultaat                     | Werkelijk resultaat                                  | Geslaagd/niet geslaagd  |
+| ---- | -------------------------------------- | -------------------------------------- | ---------------------------------------------------- | ----------------------- |
+| 1    | Check in met de juiste gegevens van M6 | Toegang verleend met welkomstmelding   | Conform verwacht (assertie in `integratie.cy.ts:27`) | Geslaagd                |
+| 2    | Controleer de database                 | Nieuw record met access_granted = true | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]       | [HANDMATIG CONTROLEREN] |
+
+### TC-13 | Na de einddatum wordt toegang geweigerd
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: AC-02.3 ·
+Test status: **Geslaagd (Cypress); stap 2 handmatig te controleren**
+
+| Stap | Test stap                              | Verwacht resultaat                                                                       | Werkelijk resultaat                                                                                              | Geslaagd/niet geslaagd  |
+| ---- | -------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1    | Check in met de juiste gegevens van M7 | Weigering met als reden dat het abonnement is beëindigd, niet met de bezoeklimietmelding | Conform verwacht (assertie in `integratie.cy.ts:32–33`: weigeringsscherm met exact de kop "Abonnement verlopen") | Geslaagd                |
+| 2    | Controleer de database                 | Nieuw record met access_granted = false                                                  | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]                                                                   | [HANDMATIG CONTROLEREN] |
+
+### TC-14 | Anonimiseren raakt alleen logs ouder dan 14 dagen
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: NF-03 ·
+Test status: **Geslaagd (Cypress); stap 1 en 3 deels handmatig te controleren**
+
+| Stap | Test stap                               | Verwacht resultaat                                                                            | Werkelijk resultaat                                                                                                                                                                     | Geslaagd/niet geslaagd  |
+| ---- | --------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1    | Open het beheerscherm                   | De tabel toont beide logs met de naam van het lid; de anonimiseerknop is actief               | Knop actief: conform verwacht (impliciete controle: `click()` in `beheer.cy.ts:23` faalt op een uitgeschakelde knop). Namen in de tabel: niet geautomatiseerd – [HANDMATIG CONTROLEREN] | Geslaagd (deels)        |
+| 2    | Start het anonimiseren en bevestig      | Bevestiging dat de logs ouder dan 14 dagen zijn geanonimiseerd                                | Conform verwacht (assertie in `beheer.cy.ts:25`: het klaarscherm met de knop "Terug naar overzicht" is zichtbaar). De tekst met het aantal wordt niet gecontroleerd                     | Geslaagd                |
+| 3    | Bekijk de tabel opnieuw                 | De log van 21 dagen oud toont Anoniem; de log van vandaag toont nog de naam                   | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]                                                                                                                                          | [HANDMATIG CONTROLEREN] |
+| 4    | Controleer beide records in de database | Oude log: user_id is NULL en subscription_type_id is nog gevuld. Log van vandaag: ongewijzigd | Conform verwacht (cy.task-query in `beheer.cy.ts:29–35`). Van de log van vandaag wordt alleen user_id gecontroleerd                                                                     | Geslaagd                |
+
+### TC-15 | Knop is inactief als er niets te anonimiseren valt
+
+Test uitgevoerd op: 22-09-2026 · Acceptatiecriterium: NF-03 ·
+Test status: **Geslaagd (Cypress); stap 2 handmatig te controleren**
+
+| Stap | Test stap                     | Verwacht resultaat                                             | Werkelijk resultaat                                                                                                               | Geslaagd/niet geslaagd  |
+| ---- | ----------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 1    | Open het beheerscherm         | De anonimiseerknop is zichtbaar maar grijs en niet aanklikbaar | Conform verwacht (assertie in `beheer.cy.ts:44`: de knop bestaat en is `disabled`). Of de knop grijs is, wordt niet gecontroleerd | Geslaagd                |
+| 2    | Probeer op de knop te klikken | Er gebeurt niets en er verandert niets in de database          | Niet geautomatiseerd – [HANDMATIG CONTROLEREN]                                                                                    | [HANDMATIG CONTROLEREN] |
+
+## 3. Dekkingstabel
+
+Geslaagde TC's per criterium. Het gaat om de TC's waarvan de Cypress-test groen is en waarvan
+de stap die het criterium raakt geautomatiseerd is gecontroleerd.
+
+| Criterium | Omschrijving (kort)                                       | Geslaagde TC's      | Opmerking                                                                                                                                                                                                      |
+| --------- | --------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AC-01.1   | Abonnementstypen, weekteller reset op maandag             | TC-07               | Alleen stap 1 geautomatiseerd; stap 2–3 (tellen deze week) [HANDMATIG CONTROLEREN]                                                                                                                             |
+| AC-01.2   | Limiet bereikt → weigering + voorgeschreven melding       | TC-04               |                                                                                                                                                                                                                |
+| AC-01.3   | Limiet niet bereikt → toegang + welkomstmelding           | TC-01, TC-05, TC-12 |                                                                                                                                                                                                                |
+| AC-01.4   | Onbeperkt → nooit een weigermelding                       | TC-06               |                                                                                                                                                                                                                |
+| AC-01.5   | Elke toegangspoging wordt gelogd                          | TC-01, TC-02, TC-03 | TC-03 met onderbouwde afwijking (§5.1)                                                                                                                                                                         |
+| AC-02.1   | Opzeggen via expliciet te submitten bevestigingsformulier | TC-08, TC-09, TC-11 |                                                                                                                                                                                                                |
+| AC-02.2   | Niet submitten = abonnement ongewijzigd                   | TC-09               | TC-08 stap 3 is [HANDMATIG CONTROLEREN]                                                                                                                                                                        |
+| AC-02.3   | Toegang actief tot eerstvolgende vervaldatum              | TC-10, TC-12, TC-13 | TC-08 stap 5 wijkt af van het testplan (§5.3)                                                                                                                                                                  |
+| AC-02.4   | Bevestigingsbericht van de annulering                     | TC-08, TC-11        |                                                                                                                                                                                                                |
+| NF-01     | Bezoeklogs beperkt tot geautoriseerde medewerkers         | —                   | Geen testcase in het testplan. /beheer is niet afgeschermd (§5.1, punt 6)                                                                                                                                      |
+| NF-02     | Pincodes gehasht opgeslagen                               | —                   | Vastgesteld bij codereview, niet via UI (`src/db/seed.ts` slaat `hashSync(...)` op in `pin_hash`; `src/server/inchecken/toegang.ts` en `src/server/abonnement/abonnement.ts` vergelijken met `bcrypt.compare`) |
+| NF-03     | Bezoeklogs na 14 dagen geanonimiseerd                     | TC-14, TC-15        |                                                                                                                                                                                                                |
+
+## 4. Gebruikte testdata
+
+Seed: `src/db/seed.ts`, via `cy.task("seed")` vóór en na elke test. De profielen zijn
+aanwezig. Afwijkingen van hoofdstuk 3 van het testplan:
+
+| Profiel | Testplan                                              | Seed (werkelijk)                                                          |
+| ------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| M1      | Basic, 2 p/w, 0 bezoeken deze week                    | Plus (limiet 2), 0 bezoeken deze week, startdatum op de 5e, niet opgezegd |
+| M2      | Basic, 2 p/w, 2 bezoeken deze week                    | Plus (limiet 2), 2 geslaagde bezoeken deze week                           |
+| M3      | Basic, 2 p/w, 1 bezoek deze week                      | Plus (limiet 2), 1 geslaagd bezoek deze week                              |
+| M4      | Premium, onbeperkt, 3 bezoeken deze week              | Premium (limiet NULL), 3 geslaagde bezoeken deze week                     |
+| M5      | Basic, 2 p/w, 2 bezoeken vóór afgelopen maandag       | Plus (limiet 2), 2 geslaagde bezoeken vóór afgelopen maandag              |
+| M6      | Basic, 2 p/w, opgezegd, einde in de toekomst          | Plus (limiet 2), subscription_end = vandaag + 12 dagen                    |
+| M7      | Basic, 2 p/w, opgezegd, einde in het verleden         | Plus (limiet 2), subscription_end = gisteren                              |
+| M8      | Basic, 2 p/w, startdag = dag-van-de-maand van vandaag | Plus (limiet 2), startdatum 2 maanden geleden op dezelfde dag             |
+
+- De seed noemt het abonnement met limiet 2 "Plus". In het testplan heet het "Basic". De seed
+  heeft daarnaast "Basis" (limiet 1), maar geen enkel testlid gebruikt dat abonnement. Het
+  gedrag (limiet 2) komt overeen.
+- M6 en M7 staan in het testplan als "nog toe te voegen". Ze staan inmiddels in de seed.
+- Bezoeklogs: een log van 21 dagen oud (M1), een al geanonimiseerde log (40 dagen oud, user_id
+  NULL) en een log van "vandaag" (M4). Dat komt overeen met het testplan.
+
+## 5. Afwijkingen en bevindingen
+
+### 5.1 Bekende beperkingen uit hoofdstuk 7 van het testplan
+
+| #   | Beperking (testplan H7)                                                                          | Bevinding in deze run                                                                                                                                                       | Conclusie                                                                                                                                                                                                |
+| --- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Onbekend lidnummer levert geen logregel op, terwijl AC-01.5 over "elke poging" spreekt           | TC-03 is groen: dezelfde melding en geen nieuwe rij. In de code zit dit in `verwerkIncheck` (`src/server/inchecken/toegang.ts`): bij een onbekend lid wordt niets gelogd    | **Geaccepteerd met onderbouwing**: zonder identiteit en abonnementstype is een rij alleen ruis, en hij zou gegevens vastleggen over een niet-geïdentificeerd persoon (privacy-afweging uit het testplan) |
+| 2   | Het klemmen van de einddatum bij korte maanden (start op de 31e → 28/29 februari) is niet getest | Niet getest, zoals gepland. De logica staat in `eindeHuidigeMaandcyclus` / `klemNaarMaand` in `src/lib/datum.ts`                                                            | **Geaccepteerd risico, doorgeschoven als verbetervoorstel** (§8, punt 3)                                                                                                                                 |
+| 3   | Opzeggen op de verlengdag zelf geeft een volledige extra cyclus                                  | TC-10 is groen. De code telt de verlengdag zelf als verstreken (`verleng.getTime() <= vandaag.getTime()` in `src/lib/datum.ts`)                                             | **Geaccepteerd met onderbouwing**: een bewuste keuze, geen bug (testplan H7)                                                                                                                             |
+| 4   | Een mislukte inlogpoging op /abonnement wordt nergens vastgelegd                                 | Bevestigd bij codereview: `verifieerLid` in `src/server/abonnement/abonnement.ts` logt niets, ook niet naar de console. Inchecken logt wel (`console.warn` en `visit_logs`) | **Verbetervoorstel** (§8, punt 4). visit_logs gaat over bezoeken, niet over accountlogins                                                                                                                |
+| 5   | Geen rem op herhaald pincode-raden op beide schermen                                             | Bevestigd bij codereview: in `src/server/inchecken/` en `src/server/abonnement/` zit geen begrenzing van het aantal pogingen                                                | **Verbetervoorstel** (§8, punt 1)                                                                                                                                                                        |
+| 6   | /beheer is niet afgeschermd met een medewerkersrol                                               | Bevestigd: `app/beheer/page.tsx` regel 3–5 vermeldt dit expliciet. Daardoor wordt NF-01 niet gerealiseerd                                                                   | **Geaccepteerd met onderbouwing** (bewust buiten de scope van de kernflow) **en verbetervoorstel** (§8, punt 2)                                                                                          |
+
+### 5.2 Bugs gevonden tijdens het testen
+
+Fix-commits uit de testperiode, na het opzetten van Cypress in `747a3e4` op 17-09-2026:
+
+| Commit                                                                    | Datum      | Bevinding                                                                                                                                                 | Gevonden door                             | Conclusie                          |
+| ------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ---------------------------------- |
+| `640948a` fix(h1): use exact AC-01.2 wording for the weekly limit message | 17-09-2026 | De melding bij een bereikte weeklimiet was "Je hebt deze week het maximale aantal bezoeken van je abonnement bereikt." in plaats van de tekst uit AC-01.2 | TC-04 (exacte tekstcontrole)              | **Opgelost**; TC-04 is groen       |
+| `3ea6f1c` fix(h1): keep DATE columns as plain strings in the query task   | 17-09-2026 | Fout in de testopzet, niet in de applicatie: de `query`-task gaf DATE-kolommen terug als JS-Date, waardoor datumvergelijkingen in de specs faalden        | TC-08, TC-10, TC-11 (datumvergelijkingen) | **Opgelost**; die tests zijn groen |
+
+### 5.3 Afwijkingen tussen testplan en implementatie
+
+| #   | Afwijking                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Conclusie                                                                                                              |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 1   | **TC-08 stap 5**: volgens het testplan wordt subscription_end "de eerstvolgende 5e". De implementatie zet de **dag vóór** de eerstvolgende 5e (`eindeHuidigeMaandcyclus` in `src/lib/datum.ts`: "loopt de toegang door tot en met de dag vóór de eerstvolgende verlengdatum"). De einddatum zelf geeft nog toegang (`abonnementVerlopen` in `toegang.ts`), dus de toegang stopt op de 5e zelf. De Cypress-spec toetst de implementatie (dag vóór), niet de tekst van het testplan | [AANVULLEN: conclusie — gedrag accepteren en testplan in een nieuwe versie verduidelijken, of implementatie aanpassen] |
+| 2   | De SQL in het testplan gebruikt namen die niet in het schema staan: `visit_logs.id` (werkelijk `visit_id`), `created_at` (werkelijk `visit_date`), `users` (werkelijk `"Users"`), `subscription_types` (werkelijk `"Subscriptions"`)                                                                                                                                                                                                                                              | Geen invloed op de geautomatiseerde tests. Bij handmatige controle de werkelijke namen gebruiken                       |
+| 3   | TC-01 stap 1 noemt `http://localhost:3000/` als incheckscherm. De spec gebruikt `/check-in`; `/` is een menu met links                                                                                                                                                                                                                                                                                                                                                            | Geen invloed op het resultaat. Bij handmatige controle `/check-in` gebruiken                                           |
+| 4   | Abonnementsnamen in het testplan ("Basic") verschillen van de seed ("Plus"), zie §4                                                                                                                                                                                                                                                                                                                                                                                               | Geen invloed: de limiet (2 per week) komt overeen                                                                      |
+
+## 6. Toetsing aan de exitcriteria (testplan hoofdstuk 8)
+
+| Exitcriterium                                                                                                      | Oordeel                      | Bewijs                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------ | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Alle vijftien testcases zijn uitgevoerd en hebben een werkelijk resultaat en een status                            | **Niet voldaan**             | Alle 15 zijn uitgevoerd en groen in Cypress (§1). Bij 17 stappen is het werkelijke resultaat (geheel of deels) nog [HANDMATIG CONTROLEREN] (§2) |
+| Elk van de negen acceptatiecriteria heeft minimaal één geslaagde test                                              | **Voldaan**                  | Dekkingstabel §3: AC-01.1 t/m AC-02.4 hebben elk minimaal één geslaagde TC                                                                      |
+| Elke afwijking heeft een conclusie: opgelost, geaccepteerd met onderbouwing, of doorgeschoven als verbetervoorstel | **Niet voldaan**             | §5.1 en §5.2 hebben allemaal een conclusie. Voor §5.3 punt 1 (TC-08 stap 5) is de conclusie nog [AANVULLEN]                                     |
+| Het testrapport is opgeleverd                                                                                      | **Voldaan** met dit document | `docs/testen/testrapport.md`. Er is nog geen .docx-versie gemaakt                                                                               |
+
+## 7. Conclusie
+
+De geautomatiseerde tests tonen aan dat de software voldoet aan de negen acceptatiecriteria uit
+fase 1 (AC-01.1 t/m AC-02.4): 15 van de 15 testcases zijn geslaagd en elk criterium heeft minimaal
+één geslaagde test. NF-03 (anonimiseren na 14 dagen) is ook aangetoond. NF-02 is bij codereview
+vastgesteld.
+
+De testfase is volgens de exitcriteria nog **niet afgerond**:
+
+- 17 teststappen zijn geheel of deels niet geautomatiseerd en moeten handmatig worden gecontroleerd.
+- De afwijking bij TC-08 stap 5 (einddatum één dag eerder dan het testplan beschrijft) heeft nog
+  een conclusie nodig.
+- NF-01 is niet gerealiseerd. /beheer is voor iedereen bereikbaar. Dat is bewust buiten de scope
+  van de kernflow gehouden.
+
+[AANVULLEN: eindoordeel na afronding van de handmatige controles]
+
+## 8. Verbetervoorstellen
+
+1. **Rem op herhaald pincode-raden, op beide schermen** (/check-in en /abonnement). Nu is het
+   aantal pogingen per lidnummer onbeperkt (§5.1 punt 5). Voorstel: na een aantal mislukte pogingen
+   binnen een tijdvenster tijdelijk weigeren. De controle hoort in de server action; een
+   frontendcontrole is geen beveiliging.
+2. **Medewerkersrol op /beheer.** Het scherm is nu voor iedereen bereikbaar, waardoor NF-01 niet
+   wordt gehaald (§5.1 punt 6). Voorstel: inloggen met een medewerkersrol, en controle van die rol
+   in de server actions van `src/server/beheer/actions.ts`.
+3. **Klemmen van de einddatum bij korte maanden.** Voorstel: een unittest op
+   `eindeHuidigeMaandcyclus` in `src/lib/datum.ts`. De functie krijgt `moment` al als parameter
+   mee, dus de systeemdatum kan vastgezet worden zonder testhook in de productiecode. Testbasis is
+   het voorbeeld uit het testplan (start op de 31e, opzeggen in januari, verlenging geklemd naar
+   28/29 februari). Stel de verwachte einddatum vast na de beslissing over §5.3 punt 1 ("dag
+   vóór" de verlengdag of niet) (§5.1 punt 2).
+4. **Logging van mislukte logins op /abonnement.** Nu wordt een mislukte login nergens vastgelegd,
+   terwijl inchecken dat wel doet (§5.1 punt 4). Voorstel: een mislukte login minimaal vastleggen,
+   zoals bij inchecken met `console.warn`, zonder pincode. Dit hangt samen met punt 1.
