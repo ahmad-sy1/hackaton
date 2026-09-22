@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788874938475,
+      "tag": "0000_needy_stark_industries",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788875027485,
+      "tag": "0001_peaceful_the_executioner",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788875050049,
+      "tag": "0002_fixed_black_crow",
+      "breakpoints": true
+    }
+  ]
+}
