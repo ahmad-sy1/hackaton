@@ -48,3 +48,31 @@ export interface VisitLogRij {
   user_id: number | null;
   subscription_type_id: number;
 }
+
+export function bezoeklogsVan(userId: number) {
+  return queryRows<VisitLogRij>(
+    "SELECT visit_id, user_id, subscription_type_id FROM visit_logs WHERE user_id = $1",
+    [userId],
+  );
+}
+
+export function laatsteBezoeklogVan(userId: number) {
+  return queryRows<VisitLogRij>(
+    "SELECT visit_id, user_id, subscription_type_id FROM visit_logs WHERE user_id = $1 ORDER BY visit_date DESC LIMIT 1",
+    [userId],
+  ).then(([log]) => log);
+}
+
+export function haalBezoeklog(visitId: number) {
+  return queryRows<VisitLogRij>(
+    "SELECT visit_id, user_id, subscription_type_id FROM visit_logs WHERE visit_id = $1",
+    [visitId],
+  ).then(([log]) => log);
+}
+
+/** Simuleert de anonimiseerknop rechtstreeks in de database, voor TC-15. */
+export function anonimiseerLogsOuderDan14Dagen() {
+  return queryRows(
+    "UPDATE visit_logs SET user_id = NULL WHERE visit_date < now() - interval '14 days'",
+  );
+}
