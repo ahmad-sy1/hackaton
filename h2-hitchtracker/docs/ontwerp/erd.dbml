@@ -1,0 +1,4 @@
+// ERD HitchTracker — gegevenslaag. Render op dbdiagram.io.
+Project hitchtracker {
+  database_type: 'PostgreSQL'
+}
