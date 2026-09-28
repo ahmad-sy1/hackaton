@@ -16,11 +16,18 @@ zodat hij niet te veel betaalt. Drie epics:
 
 ## Ontwerpnorm
 
-- ERD in DBML (dbdiagram.io), use case diagram en activiteitendiagram in PlantUML,
-  wireframes in `docs/ontwerp/wireframes/`.
-- Voor de logica-laag telt alleen een echt **activiteitendiagram**: geen flowchart, geen
-  Mermaid, geen sequencediagram. De leeswijzer (v1.0.1) noemt nog "flowcharts/navigatie";
-  de nieuwere norm is leidend.
+- Tool per diagram:
+  - ERD → DBML in docs/ontwerp/erd.dbml (render op dbdiagram.io)
+  - Use case diagram → PlantUML in docs/ontwerp/use-case.puml
+  - Activiteitendiagram → PlantUML in docs/ontwerp/activiteitendiagram.puml
+  - Wireframes → docs/ontwerp/wireframes/
+  - Aanvullend (sequence, status, schermnavigatie, klassen) → Mermaid, als ```mermaid-blok
+    in docs/ontwerp/diagrammen.md
+- Voor de logica-laag telt alleen een echt activiteitendiagram in PlantUML — geen
+  Mermaid-flowchart, geen swimlane-diagram, geen sequencediagram.
+- Gebruik geen Mermaid-betadiagrammen (usecase-beta, swimlane-beta): die renderen niet
+  betrouwbaar in GitHub.
+- De leeswijzer (v1.0.1) noemt nog "flowcharts/navigatie"; de nieuwere norm is leidend.
 - Ontwerpbestanden in `docs/ontwerp/` schrijf je alleen als daar expliciet om gevraagd wordt.
   De ontwerpfase is van de docent.
 
