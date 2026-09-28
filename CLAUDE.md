@@ -1,7 +1,7 @@
 # CLAUDE.md — werkregels voor deze repo
 
 Dit is een onderwijsrepo voor de module **Hackaton** (mbo-4 Software Developer, kerntaak B1-K1).
-Elke hackaton heeft een eigen map en een eigen branch. Actieve casus: `h1-sportschool-de-kast/`.
+Elke hackaton heeft een eigen map en een eigen branch. Actieve casus: `h2-hitchtracker/`.
 
 De eigenaar van deze repo (Ahmad) is docent en eindverantwoordelijke. Jij bent uitvoerder, geen beslisser.
 
@@ -20,7 +20,7 @@ niet als een tool-log.
 ## 2. Commits
 
 - **Conventional Commits**, kleine letters, Engels, scope = hackaton-nummer:
-  `feat(h1): ...`, `fix(h1): ...`, `chore(h1): ...`, `docs(h1): ...`, `test(h1): ...`, `refactor(h1): ...`, `style(h1): ...`, `ci(h1): ...`
+  `feat(h<nr>): ...`, `fix(h<nr>): ...`, `chore(h<nr>): ...`, `docs(h<nr>): ...`, `test(h<nr>): ...`, `refactor(h<nr>): ...`, `style(h<nr>): ...`, `ci(h<nr>): ...`
 - Eén logische wijziging per commit. Niet vijf losse dingen in één commit proppen.
 - Onderwerpregel max ~72 tekens, gebiedende wijs, geen punt aan het eind.
 - Stage **alleen bestanden die bij die commit horen**. Geen `git add .` en geen `git commit -a`
@@ -30,22 +30,22 @@ niet als een tool-log.
 ## 3. Branches, tags en pushen
 
 - Nooit direct committen op `main`.
-- Basisbranch per casus: `h1-sportschool-de-kast`. Featurebranches daaronder: `h1/inchecken-pincode`.
+- Basisbranch per casus: `h<nr>-<casus>` (bijv. `h1-sportschool-de-kast`). Featurebranches
+  daaronder: `h<nr>/<onderwerp>` (bijv. `h1/inchecken-pincode`).
 - **Vraag altijd toestemming voor je pusht.** Nooit ongevraagd pushen.
 - Nooit `push --force`, nooit `--force-with-lease`, nooit rebasen of history herschrijven
   op een branch die al gepusht is.
 - Nooit `git reset --hard`, `git checkout .` of `git clean` zonder expliciete opdracht —
   dat gooit werk weg dat je niet terughaalt.
-- **Tags maak of verplaats je nooit zelf.** Tags (`h1-fase1`, `h1-fase2`, `h1-fase3`) zijn
+- **Tags maak of verplaats je nooit zelf.** Tags (`h<nr>-fase1`, `h<nr>-fase2`, `h<nr>-fase3`) zijn
   inlevermomenten en zet de docent handmatig.
 - Geen PR's openen, mergen of sluiten zonder expliciete opdracht.
 
 ## 4. Scope
 
-- Werk alleen in de map van de actieve hackaton. Kom niet aan `h2-*` t/m `h6-*` of aan
+- Werk alleen in de map van de actieve hackaton. Kom niet aan andere `h*`-mappen of aan
   documenten buiten die map, tenzij daar expliciet om gevraagd wordt.
-- Bouw **alleen** wat gevraagd is. De 100%-basis van H1 fase 2 zijn de negen acceptatiecriteria
-  van US-01 (toegang op abonnementstype) en US-02 (abonnement annuleren). Geen extra features,
+- Bouw **alleen** wat gevraagd is. Geen extra features,
   geen "handig meegenomen" schermen, geen bonusfunctionaliteit.
 - Geen ongevraagde refactors, hernoemingen of "opruimacties" in code die verder niets met de
   taak te maken heeft.
@@ -63,17 +63,14 @@ Vaste stack, niet ter discussie tenzij ik erover begin:
 - Migraties die al gecommit zijn wijzig je niet — je schrijft een nieuwe.
 - Genereerde bestanden (`.next/`, `node_modules/`, drizzle-output) niet handmatig aanpassen.
 
-## 6. Security & privacy (casus-specifiek, telt mee in de beoordeling)
+## 6. Security & privacy (telt mee in de beoordeling)
 
-- Pincode: **nooit plaintext**, **nooit `int`** (leidende nullen gaan verloren). `varchar` + hashing.
+Casus-specifieke regels staan in de `CLAUDE.md` van de casusmap.
+
 - Validatie hoort op **twee plekken**: frontend voor bruikbaarheid, server action voor echte veiligheid.
   Frontend-validatie is nooit de beveiliging.
 - Nooit secrets, `.env`-inhoud, wachtwoorden of connectionstrings in code, commits of README.
   `.env` staat in `.gitignore` en blijft daar.
-- Bezoekaantal wordt **afgeleid via een query** op `visit_logs` vanaf afgelopen maandag —
-  geen tellerkolom, geen resetlogica.
-- Anonimiseren van bezoeklogs ouder dan 14 dagen gebeurt via een **handmatige knop** in het
-  beheerscherm (`UPDATE visit_logs SET user_id = NULL WHERE ...`), niet via een cronjob.
 - Geen echte persoonsgegevens in seeds of testdata. Verzonnen namen, verzonnen e-mailadressen.
 
 ## 7. Het ontwerp is leidend
