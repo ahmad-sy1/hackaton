@@ -62,9 +62,9 @@ Zie [diagrammen.md](diagrammen/diagrammen.md#schermnavigatie) voor de navigatie 
 
 Bron: [use-case.puml](diagrammen/use-case.puml)
 
-**<<include>>**: verplicht, gebeurt altijd
+**`<<include>>`**: verplicht, gebeurt altijd
 
-**<<extend>>**: optioneel, alleen onder een voorwaarde
+**`<<extend>>`**: optioneel, alleen onder een voorwaarde
 
 ## User stories
 
