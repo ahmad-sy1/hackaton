@@ -2,3 +2,57 @@
 Project hitchtracker {
   database_type: 'PostgreSQL'
 }
+
+Enum ride_status {
+  geaccepteerd
+  afgerond
+}
+
+Table cities {
+  id integer [pk, increment]
+  name varchar(100) [not null, unique]
+}
+
+Table tariffs {
+  id integer [pk, increment]
+  city_id integer [not null, ref: > cities.id]
+  start_fee_cents integer [not null]
+  per_km_cents integer [not null]
+  per_minute_cents integer [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [not null, default: `now()`]
+}
+
+Table locations {
+  id integer [pk, increment]
+  city_id integer [not null, ref: > cities.id]
+  name varchar(150) [not null]
+}
+
+Table routes {
+  id integer [pk, increment]
+  origin_location_id integer [not null, ref: > locations.id]
+  destination_location_id integer [not null, ref: > locations.id]
+  distance_m integer [not null]
+  duration_s integer [not null]
+
+  indexes {
+    (origin_location_id, destination_location_id) [unique]
+  }
+}
+
+Table rides {
+  id uuid [pk, default: `gen_random_uuid()`]
+  origin_location_id integer [not null, ref: > locations.id]
+  destination_location_id integer [not null, ref: > locations.id]
+  tariff_id integer [not null, ref: > tariffs.id]
+  status ride_status [not null, default: 'geaccepteerd']
+  estimated_distance_m integer [not null]
+  estimated_duration_s integer [not null]
+  estimated_price_cents integer [not null]
+  actual_distance_m integer
+  actual_duration_s integer
+  final_price_cents integer
+  accepted_at timestamp [not null, default: `now()`]
+  completed_at timestamp
+}
