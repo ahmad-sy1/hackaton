@@ -31,6 +31,10 @@ _(Hoe ziet het eruit voor de klant, hoe werkt het voor de klant)_
 
 Link: _TODO_
 
+### Schermnavigatie
+
+Zie [diagrammen.md](diagrammen/diagrammen.md#schermnavigatie) voor de navigatie tussen de schermen.
+
 ### Use case diagram
 
 ![Use case diagram HitchTracker](img/use-case.png)
