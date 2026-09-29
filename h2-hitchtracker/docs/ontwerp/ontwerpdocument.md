@@ -50,6 +50,8 @@ De reiziger opent HitchTracker in de browser, kiest waar hij vandaan komt en waa
 
 ![Wireframe eindprijs](img/wireframe-eindprijs.png)
 
+Bron: [wireframe-schatting.png](img/wireframe-schatting.png) · [wireframe-eindprijs.png](img/wireframe-eindprijs.png)
+
 ### Schermnavigatie
 
 Zie [diagrammen.md](diagrammen/diagrammen.md#schermnavigatie) voor de navigatie tussen de schermen.
