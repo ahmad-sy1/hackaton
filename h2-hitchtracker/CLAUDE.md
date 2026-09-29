@@ -11,18 +11,21 @@ zodat hij niet te veel betaalt. Drie epics:
 
 ## Status
 
-- Fase 1 (ontwerpen). De kernflow is **nog niet gekozen**; die bepaalt de docent.
-- Verzin geen user stories, acceptatiecriteria of kernflow.
+- Fase 1 (ontwerpen).
+- Kernflow: Epic 1 (US-01 Ritschatting vooraf) + Epic 3 (US-02 Eindprijs controleren).
+  Epic 2 (live route tijdens de rit) valt buiten scope.
+- De user stories en acceptatiecriteria staan op het Trello-bord "Hackathon" en komen
+  in ontwerpdocument.md. Verzin er geen bij en wijzig ze niet.
 
 ## Ontwerpnorm
 
 - Tool per diagram:
-  - ERD → DBML in docs/ontwerp/erd.dbml (render op dbdiagram.io)
-  - Use case diagram → PlantUML in docs/ontwerp/use-case.puml
-  - Activiteitendiagram → PlantUML in docs/ontwerp/activiteitendiagram.puml
+  - ERD → DBML in docs/ontwerp/diagrammen/erd.dbml (render op dbdiagram.io)
+  - Use case diagram → PlantUML in docs/ontwerp/diagrammen/use-case.puml
+  - Activiteitendiagram → PlantUML in docs/ontwerp/diagrammen/activiteitendiagram.puml
   - Wireframes → docs/ontwerp/wireframes/
   - Aanvullend (sequence, status, schermnavigatie, klassen) → Mermaid, als ```mermaid-blok
-    in docs/ontwerp/diagrammen.md
+    in docs/ontwerp/diagrammen/diagrammen.md
 - Voor de logica-laag telt alleen een echt activiteitendiagram in PlantUML — geen
   Mermaid-flowchart, geen swimlane-diagram, geen sequencediagram.
 - Gebruik geen Mermaid-betadiagrammen (usecase-beta, swimlane-beta): die renderen niet
