@@ -78,7 +78,7 @@ _TODO_
 
 ![ERD HitchTracker](img/erd.png)
 
-Bron: [erd.dbml](diagrammen/erd.dbml) · Link dbdiagram: _TODO_
+Bron: [erd.dbml](diagrammen/erd.dbml)
 
 ## Programmalogica
 
