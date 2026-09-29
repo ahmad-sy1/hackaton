@@ -17,12 +17,12 @@ zodat hij niet te veel betaalt. Drie epics:
 ## Ontwerpnorm
 
 - Tool per diagram:
-  - ERD → DBML in docs/ontwerp/erd.dbml (render op dbdiagram.io)
-  - Use case diagram → PlantUML in docs/ontwerp/use-case.puml
-  - Activiteitendiagram → PlantUML in docs/ontwerp/activiteitendiagram.puml
+  - ERD → DBML in docs/ontwerp/diagrammen/erd.dbml (render op dbdiagram.io)
+  - Use case diagram → PlantUML in docs/ontwerp/diagrammen/use-case.puml
+  - Activiteitendiagram → PlantUML in docs/ontwerp/diagrammen/activiteitendiagram.puml
   - Wireframes → docs/ontwerp/wireframes/
   - Aanvullend (sequence, status, schermnavigatie, klassen) → Mermaid, als ```mermaid-blok
-    in docs/ontwerp/diagrammen.md
+    in docs/ontwerp/diagrammen/diagrammen.md
 - Voor de logica-laag telt alleen een echt activiteitendiagram in PlantUML — geen
   Mermaid-flowchart, geen swimlane-diagram, geen sequencediagram.
 - Gebruik geen Mermaid-betadiagrammen (usecase-beta, swimlane-beta): die renderen niet

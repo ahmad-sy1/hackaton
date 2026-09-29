@@ -35,7 +35,7 @@ Link: _TODO_
 
 ![Use case diagram HitchTracker](img/use-case.png)
 
-Bron: [use-case.puml](use-case.puml)
+Bron: [use-case.puml](diagrammen/use-case.puml)
 
 **<<include>>** – verplicht, gebeurt altijd
 **<<extend>>** – optioneel, alleen onder een voorwaarde
@@ -74,13 +74,13 @@ _TODO_
 
 ![ERD HitchTracker](img/erd.png)
 
-Bron: [erd.dbml](erd.dbml) · Link dbdiagram: _TODO_
+Bron: [erd.dbml](diagrammen/erd.dbml) · Link dbdiagram: _TODO_
 
 ## Programmalogica
 
 ![Activiteitendiagram HitchTracker](img/activiteitendiagram.png)
 
-Bron: [activiteitendiagram.puml](activiteitendiagram.puml)
+Bron: [activiteitendiagram.puml](diagrammen/activiteitendiagram.puml)
 
 ## Hardware
 
