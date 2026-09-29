@@ -50,8 +50,6 @@ De reiziger opent HitchTracker in de browser, kiest waar hij vandaan komt en waa
 
 ![Wireframe eindprijs](img/wireframe-eindprijs.png)
 
-Link: _TODO_
-
 ### Schermnavigatie
 
 Zie [diagrammen.md](diagrammen/diagrammen.md#schermnavigatie) voor de navigatie tussen de schermen.
@@ -113,7 +111,7 @@ De reiziger gebruikt HitchTracker als webapplicatie in de browser. De schermen z
 
 ![ERD HitchTracker](img/erd.png)
 
-Bron: [erd.dbml](diagrammen/erd.dbml) · Link dbdiagram: _TODO_
+Bron: [erd.dbml](diagrammen/erd.dbml)
 
 Het datamodel bestaat uit vijf tabellen. `cities` en `tariffs` leggen per stad vast wat een rit kost. `locations` bevat de vaste ophaalpunten per stad. `routes` bevat per combinatie van twee ophaalpunten de afstand en duur; dit is een koppeltabel tussen `locations` en zichzelf, die in de MVP een externe routeservice vervangt. `rides` bevat per rit de vastgelegde schatting en, na afloop, de werkelijke afstand, duur en eindprijs.
 
