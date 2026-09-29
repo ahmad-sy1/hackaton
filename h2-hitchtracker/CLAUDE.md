@@ -11,8 +11,11 @@ zodat hij niet te veel betaalt. Drie epics:
 
 ## Status
 
-- Fase 1 (ontwerpen). De kernflow is **nog niet gekozen**; die bepaalt de docent.
-- Verzin geen user stories, acceptatiecriteria of kernflow.
+- Fase 1 (ontwerpen).
+- Kernflow: Epic 1 (US-01 Ritschatting vooraf) + Epic 3 (US-02 Eindprijs controleren).
+  Epic 2 (live route tijdens de rit) valt buiten scope.
+- De user stories en acceptatiecriteria staan op het Trello-bord "Hackathon" en komen
+  in ontwerpdocument.md. Verzin er geen bij en wijzig ze niet.
 
 ## Ontwerpnorm
 
