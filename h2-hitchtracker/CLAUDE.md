@@ -46,3 +46,13 @@ zodat hij niet te veel betaalt. Drie epics:
 ## Tags
 
 - Tags (`h2-fase1`, `h2-fase2`, `h2-fase3`) zet de docent.
+
+## Taal
+
+- Alle code en bestanden zijn in het Engels: bestandsnamen, mapnamen, functies, variabelen,
+  types, enums en commentaar. Geen Nederlandse identifiers.
+- Uitzonderingen: teksten die de gebruiker op het scherm ziet blijven Nederlands (de wireframes
+  en acceptatiecriteria zijn Nederlands). Routemappen onder app/ volgen de URL's uit de
+  wireframes (/schatting, /rit/[id]). De bestanden in docs/ontwerp/ blijven Nederlands.
+- Het bestaande script src/server/ritten/opschonen.ts en het npm-script ritten:opschonen blijven
+  zoals ze zijn.
