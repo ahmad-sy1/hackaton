@@ -52,7 +52,8 @@ zodat hij niet te veel betaalt. Drie epics:
 - Alle code en bestanden zijn in het Engels: bestandsnamen, mapnamen, functies, variabelen,
   types, enums en commentaar. Geen Nederlandse identifiers.
 - Uitzonderingen: teksten die de gebruiker op het scherm ziet blijven Nederlands (de wireframes
-  en acceptatiecriteria zijn Nederlands). Routemappen onder app/ volgen de URL's uit de
-  wireframes (/schatting, /rit/[id]). De bestanden in docs/ontwerp/ blijven Nederlands.
+  en acceptatiecriteria zijn Nederlands). De bestanden in docs/ontwerp/ blijven Nederlands.
+- URL's zijn ook Engels: /estimate?from=<id>&to=<id> en /ride/[id]. De wireframes tonen nog
+  /schatting en /rit/; de Engelse URL's zijn een bewuste keuze.
 - Het bestaande script src/server/ritten/opschonen.ts en het npm-script ritten:opschonen blijven
   zoals ze zijn.
