@@ -6,11 +6,11 @@ import { getEstimate } from "@/src/server/ride-estimate/queries";
 
 export default async function EstimatePage({
   searchParams,
-}: PageProps<"/schatting">) {
-  const { van, naar } = await searchParams;
+}: PageProps<"/estimate">) {
+  const { from, to } = await searchParams;
   // Calculated again on every visit: an estimate is never stored before it is
   // accepted (AC-01.4).
-  const result = await getEstimate(van, naar);
+  const result = await getEstimate(from, to);
 
   if (result.status !== "ok") {
     return (

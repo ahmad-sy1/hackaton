@@ -42,7 +42,7 @@ export async function acceptEstimate(
   if (result.status !== "ok") redirect(estimateUrl(originId, destinationId));
 
   const rideId = await createRide(result.estimate);
-  redirect(`/rit/${rideId}`);
+  redirect(`/ride/${rideId}`);
 }
 
 function estimateUrl(
@@ -50,8 +50,8 @@ function estimateUrl(
   destinationId: number | string,
 ) {
   const params = new URLSearchParams({
-    van: String(originId),
-    naar: String(destinationId),
+    from: String(originId),
+    to: String(destinationId),
   });
-  return `/schatting?${params.toString()}`;
+  return `/estimate?${params.toString()}`;
 }

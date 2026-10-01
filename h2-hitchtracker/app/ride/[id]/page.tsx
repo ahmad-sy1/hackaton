@@ -4,7 +4,7 @@ import { formatDistanceKm, formatDurationMinutes } from "@/src/lib/units";
 import { getRideById } from "@/src/server/ride-estimate/queries";
 import { CopyLink } from "./_components/CopyLink";
 
-export default async function RidePage({ params }: PageProps<"/rit/[id]">) {
+export default async function RidePage({ params }: PageProps<"/ride/[id]">) {
   const { id } = await params;
   const ride = await getRideById(id);
   if (ride === null) notFound();
@@ -31,7 +31,7 @@ export default async function RidePage({ params }: PageProps<"/rit/[id]">) {
           </p>
         </div>
 
-        <CopyLink path={`/rit/${ride.id}`} />
+        <CopyLink path={`/ride/${ride.id}`} />
       </div>
     </div>
   );
