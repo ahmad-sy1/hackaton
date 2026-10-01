@@ -7,6 +7,7 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - "h1-sportschool-de-kast/**"
+      - "h2-hitchtracker/**"
       - ".github/workflows/ci.yml"
 
 # A newer push to the same PR cancels the run that is still going.
@@ -21,9 +22,12 @@ jobs:
   check:
     name: format:check + lint + typecheck
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [h1-sportschool-de-kast, h2-hitchtracker]
     defaults:
       run:
-        working-directory: h1-sportschool-de-kast
+        working-directory: ${{ matrix.project }}
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +35,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: h1-sportschool-de-kast/package-lock.json
+          cache-dependency-path: ${{ matrix.project }}/package-lock.json
 
       - run: npm ci
 
