@@ -6,7 +6,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - "h1-sportschool-de-kast/**"
       - "h2-hitchtracker/**"
       - ".github/workflows/ci.yml"
 
@@ -22,12 +21,9 @@ jobs:
   check:
     name: format:check + lint + typecheck
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        project: [h1-sportschool-de-kast, h2-hitchtracker]
     defaults:
       run:
-        working-directory: ${{ matrix.project }}
+        working-directory: h2-hitchtracker
     steps:
       - uses: actions/checkout@v4
 
@@ -35,7 +31,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: ${{ matrix.project }}/package-lock.json
+          cache-dependency-path: h2-hitchtracker/package-lock.json
 
       - run: npm ci
 
