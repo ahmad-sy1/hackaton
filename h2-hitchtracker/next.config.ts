@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {/* config options here */};
+const nextConfig: NextConfig = {
+  // Keeps next dev from appending generated agent rules to CLAUDE.md.
+  agentRules: false,
+};
 
 export default nextConfig;
