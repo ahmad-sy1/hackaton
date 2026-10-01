@@ -68,3 +68,13 @@ export interface RequestEstimateState {
   originId: string;
   destinationId: string;
 }
+
+/** What the ride screen shows of a stored ride. */
+export interface RideSummary {
+  id: string;
+  originName: string;
+  destinationName: string;
+  estimatedDistanceM: number;
+  estimatedDurationS: number;
+  estimatedPriceCents: number;
+}
