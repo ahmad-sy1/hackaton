@@ -63,7 +63,7 @@ export interface EstimateData {
 
 /** State of the start screen form, as returned by `requestEstimate`. */
 export interface RequestEstimateState {
-  message: string | null;
+  error: MissingInput | NoEstimate | null;
   /** The submitted selection, so the screen knows which choice the message is about. */
   originId: string;
   destinationId: string;

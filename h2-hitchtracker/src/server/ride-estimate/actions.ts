@@ -18,7 +18,7 @@ export async function requestEstimate(
 
   if (result.status !== "ok") {
     return {
-      message: result.message,
+      error: result,
       originId: typeof originId === "string" ? originId : "",
       destinationId: typeof destinationId === "string" ? destinationId : "",
     };
