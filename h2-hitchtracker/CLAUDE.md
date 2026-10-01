@@ -11,11 +11,14 @@ zodat hij niet te veel betaalt. Drie epics:
 
 ## Status
 
-- Fase 1 (ontwerpen).
+- Fase 2 (realiseren). Code mag in `src/` en `app/`; de bestanden in `docs/ontwerp/` blijven
+  alleen op expliciete vraag aanpasbaar.
 - Kernflow: Epic 1 (US-01 Ritschatting vooraf) + Epic 3 (US-02 Eindprijs controleren).
   Epic 2 (live route tijdens de rit) valt buiten scope.
 - De user stories en acceptatiecriteria staan op het Trello-bord "Hackathon" en komen
   in ontwerpdocument.md. Verzin er geen bij en wijzig ze niet.
+- De 100%-basis van fase 2 is AC-01.1 t/m AC-01.5 en AC-02.1 t/m AC-02.4. De 20%-grens wordt in
+  centen met gehele getallen berekend (eind * 100 > schatting * 120), nooit met floats.
 
 ## Ontwerpnorm
 

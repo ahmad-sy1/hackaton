@@ -10,8 +10,8 @@ de reiziger kan volgen welke route de chauffeur rijdt, hoe ver de rit is en wat 
 
 | Fase       | Werkproces | Status           |
 | ---------- | ---------- | ---------------- |
-| Ontwerpen  | B1-K1-W2   | bezig            |
-| Realiseren | B1-K1-W3   | nog niet gestart |
+| Ontwerpen  | B1-K1-W2   | afgerond         |
+| Realiseren | B1-K1-W3   | bezig            |
 | Testen     | B1-K1-W4   | nog niet gestart |
 
 ## Ontwerp
