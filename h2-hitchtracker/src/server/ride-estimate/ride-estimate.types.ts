@@ -60,3 +60,11 @@ export interface EstimateData {
   route: RouteInfo | null;
   tariff: ActiveTariff | null;
 }
+
+/** State of the start screen form, as returned by `requestEstimate`. */
+export interface RequestEstimateState {
+  message: string | null;
+  /** The submitted selection, so the screen knows which choice the message is about. */
+  originId: string;
+  destinationId: string;
+}
