@@ -82,6 +82,8 @@ Als reiziger wil ik in de webapp een vertrekpunt en bestemming invoeren, zodat i
 - AC-01.4 Accepteert de reiziger de schatting, dan wordt er een rit aangemaakt en wordt de schatting bij die rit vastgelegd. Zonder acceptatie wordt er niets opgeslagen.
 - AC-01.5 Ligt de bestemming buiten een stad met een bekend tarief, dan krijgt de reiziger een melding dat er geen schatting mogelijk is.
 
+Het tarief is dat van de stad van het vertrekpunt. Is er geen route of geen actief tarief, dan geldt de melding van AC-01.5.
+
 **Prioritering:** US-01 eerst. US-02 vergelijkt de eindprijs met de schatting die in US-01 wordt vastgelegd (AC-01.4); zonder US-01 heeft US-02 niets om mee te vergelijken.
 
 ## US-02 | Eindprijs controleren | Prioriteit: Must have | Tijdsindicatie: 1,5 dag
@@ -143,11 +145,11 @@ _Waarom gekozen voor X en niet voor Y (ethiek/privacy/security)_
 
 **Security: niet te raden rit-link.** De reiziger opent zijn rit via een link. Met oplopende nummers (/rit/5, /rit/6) zou iemand andermans rit kunnen bekijken. Daarom heeft elke rit een uuid als id.
 
-**Privacy: dataminimalisatie.** HitchTracker werkt zonder accounts en slaat geen persoonsgegevens op. De reiziger kiest uit vaste ophaalpunten, zodat er geen GPS-locatie wordt vastgelegd. Toch kunnen ritten iets zeggen over iemand (bijvoorbeeld "hotel naar ziekenhuis"). Daarom worden ritgegevens na 30 dagen verwijderd: lang genoeg om een klacht over een rit af te handelen, niet langer dan nodig.
+**Privacy: dataminimalisatie.** HitchTracker werkt zonder accounts en slaat geen persoonsgegevens op. De reiziger kiest uit vaste ophaalpunten, zodat er geen GPS-locatie wordt vastgelegd. Toch kunnen ritten iets zeggen over iemand (bijvoorbeeld "hotel naar ziekenhuis"). Daarom worden ritgegevens na 30 dagen verwijderd: lang genoeg om een klacht over een rit af te handelen, niet langer dan nodig. Het verwijderen van ritten ouder dan 30 dagen gebeurt handmatig via een script (npm run ritten:opschonen). In productie wordt dit een geplande taak.
 
 **Ethiek: eerlijke waarschuwing.** De waarschuwing beschuldigt de chauffeur niet. Een omleiding of file kan een hogere prijs verklaren. Daarom ligt de grens op 20% en adviseert de app de reiziger om uitleg te vragen, in plaats van te zeggen dat hij is opgelicht. Ook ziet de reiziger altijd welk tarief is gebruikt, zodat hij de berekening kan volgen (transparantie).
 
-**Haalbaarheid: afbakening.** Deze hackathon bouwt Epic 1 (schatting vooraf) en Epic 3 (eindprijs achteraf). Epic 2 (live route en prijs tijdens de rit) vraagt om GPS en kaarten en is niet haalbaar in één realisatieweek. Accounts, betalen en een chauffeursapp vallen ook buiten scope. Het afronden van een rit wordt gesimuleerd met een demoknop.
+**Haalbaarheid: afbakening.** Deze hackathon bouwt Epic 1 (schatting vooraf) en Epic 3 (eindprijs achteraf). Epic 2 (live route en prijs tijdens de rit) vraagt om GPS en kaarten en is niet haalbaar in één realisatieweek. Accounts, betalen en een chauffeursapp vallen ook buiten scope. Het afronden van een rit wordt gesimuleerd met een demoknop. De demoknop simuleert een rit met een vaste afwijking op de schatting: 'normaal' (afstand +5%, duur +5%) of 'omweg' (afstand +25%, duur +30%), zodat beide uitkomsten testbaar zijn.
 
 **Haalbaarheid: desktop.** Gekozen voor desktop omdat de MVP op een laptop wordt gebouwd, getest en gedemonstreerd. Een mobiele weergave is een logische vervolgstap, maar valt buiten deze hackathon.
 

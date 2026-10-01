@@ -1,0 +1,28 @@
+# Lokale PostgreSQL voor de ontwikkelomgeving.
+# Start met:  docker compose up -d
+# Stop met:   docker compose down          (data blijft in het volume staan)
+# Wissen:     docker compose down -v       (verwijdert ook de data)
+#
+# De gebruikersnaam, het wachtwoord en de databasenaam hieronder komen exact
+# overeen met de DATABASE_URL in .env.example. Host-poort 5433, omdat H1 5432 gebruikt.
+services:
+  db:
+    image: postgres:17
+    container_name: hitchtracker-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hitchtracker
+      POSTGRES_PASSWORD: hitchtracker
+      POSTGRES_DB: hitchtracker
+    ports:
+      - "5433:5432"
+    volumes:
+      - hitchtracker-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  hitchtracker-db-data:
