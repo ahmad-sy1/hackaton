@@ -5,7 +5,7 @@ import { tariffs } from "./tariffs";
 export const rideStatus = pgEnum("ride_status", ["geaccepteerd", "afgerond"]);
 
 /**
- * The id is a uuid so a ride link cannot be guessed (no /rit/5, /rit/6).
+ * The id is a uuid so a ride link cannot be guessed (no /ride/5, /ride/6).
  * The tariff is referenced so the estimate stays traceable after a tariff change.
  */
 export const rides = pgTable("rides", {
