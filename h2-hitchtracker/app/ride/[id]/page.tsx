@@ -7,8 +7,8 @@ import {
 } from "@/src/lib/money";
 import {
   formatDistanceKm,
+  formatDrivenDuration,
   formatDurationMinutes,
-  formatMinutes,
 } from "@/src/lib/units";
 import { completeRideDemo } from "@/src/server/ride-completion/actions";
 import { compareWithEstimate } from "@/src/server/ride-completion/ride-completion";
@@ -155,7 +155,7 @@ function CompletedRide({
             </div>
             <div className="flex justify-between">
               <dt>Ritduur</dt>
-              <dd>{formatMinutes(actualDurationS)}</dd>
+              <dd>{formatDrivenDuration(actualDurationS)}</dd>
             </div>
             <div className="flex justify-between border-t border-zinc-300 pt-3 text-lg font-bold">
               <dt>Verschil</dt>
