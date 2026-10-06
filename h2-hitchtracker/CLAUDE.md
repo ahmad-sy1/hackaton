@@ -53,6 +53,8 @@ zodat hij niet te veel betaalt. Drie epics:
   types, enums en commentaar. Geen Nederlandse identifiers.
 - Uitzonderingen: teksten die de gebruiker op het scherm ziet blijven Nederlands (de wireframes
   en acceptatiecriteria zijn Nederlands). De bestanden in docs/ontwerp/ blijven Nederlands.
+- docs/testen/ is ook een uitzondering, net als docs/ontwerp/: mapnaam, bestandsnamen en inhoud
+  zijn Nederlands (zelfde opbouw als H1).
 - URL's zijn ook Engels: /estimate?from=<id>&to=<id> en /ride/[id]. De wireframes tonen nog
   /schatting en /rit/; de Engelse URL's zijn een bewuste keuze.
 - Het bestaande script src/server/ritten/opschonen.ts en het npm-script ritten:opschonen blijven
