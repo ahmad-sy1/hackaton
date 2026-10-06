@@ -14,6 +14,7 @@ export async function completeRideDemo(
   formData: FormData,
 ): Promise<void> {
   // Both values reach the server from the browser and can be tampered with.
+  // Unlike acceptEstimate there is no screen to go back to for an invalid id.
   if (!isRideId(rideId)) notFound();
   const scenario = parseScenario(formData.get("scenario"));
   // Either way the ride screen shows the stored state, so the result needs no
