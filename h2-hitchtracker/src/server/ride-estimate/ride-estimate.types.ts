@@ -77,4 +77,9 @@ export interface RideSummary {
   estimatedDistanceM: number;
   estimatedDurationS: number;
   estimatedPriceCents: number;
+  status: "geaccepteerd" | "afgerond";
+  /** Null until the ride is completed (US-02). */
+  actualDistanceM: number | null;
+  actualDurationS: number | null;
+  finalPriceCents: number | null;
 }

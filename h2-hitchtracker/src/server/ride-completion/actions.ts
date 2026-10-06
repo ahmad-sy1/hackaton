@@ -1,0 +1,22 @@
+"use server";
+
+import { notFound, redirect } from "next/navigation";
+import { isRideId } from "../ride-estimate/queries";
+import { completeRide } from "./queries";
+import { parseScenario } from "./ride-completion";
+
+/**
+ * Demo button on the ride screen, standing in for the driver. Only the
+ * scenario is sent; distance, duration and price are decided on the server.
+ */
+export async function completeRideDemo(
+  rideId: string,
+  formData: FormData,
+): Promise<void> {
+  // Both values reach the server from the browser and can be tampered with.
+  if (!isRideId(rideId)) notFound();
+  const scenario = parseScenario(formData.get("scenario"));
+  if (scenario !== null) await completeRide(rideId, scenario);
+
+  redirect(`/ride/${rideId}`);
+}
