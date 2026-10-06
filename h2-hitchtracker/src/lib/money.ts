@@ -7,3 +7,9 @@ const euro = new Intl.NumberFormat("nl-NL", {
 export function formatEuro(cents: number): string {
   return euro.format(cents / 100);
 }
+
+/** 1240 -> "+ € 12,40", -300 -> "− € 3,00". */
+export function formatEuroDifference(cents: number): string {
+  const sign = cents < 0 ? "−" : "+";
+  return `${sign} ${formatEuro(Math.abs(cents))}`;
+}
