@@ -11,3 +11,8 @@ export function formatDurationMinutes(durationS: number): string {
 export function formatDistanceKm(distanceM: number): string {
   return `${kilometres.format(distanceM / 1000)} km`;
 }
+
+/** 1920 -> "32 min". Without "ca.": this is the driven duration, not an estimate. */
+export function formatDrivenDuration(durationS: number): string {
+  return `${Math.round(durationS / 60)} min`;
+}

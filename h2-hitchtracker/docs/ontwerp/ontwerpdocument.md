@@ -48,9 +48,13 @@ De reiziger opent HitchTracker in de browser, kiest waar hij vandaan komt en waa
 
 ![Wireframe ritschatting](img/wireframe-schatting.png)
 
-![Wireframe eindprijs](img/wireframe-eindprijs.png)
+![Wireframe ritscherm](img/wireframe-ritscherm.png)
 
-Bron: [wireframe-schatting.png](img/wireframe-schatting.png) · [wireframe-eindprijs.png](img/wireframe-eindprijs.png)
+![Wireframe eindprijsscherm](img/wireframe-eindprijsscherm.png)
+
+![Wireframe eindprijsscherm zonder waarschuwing](img/wireframe-eindprijsscherm-zonder-waarschuwing.png)
+
+Bron: [wireframe-schatting.png](img/wireframe-schatting.png) · [wireframe-ritscherm.png](img/wireframe-ritscherm.png) · [wireframe-eindprijsscherm.png](img/wireframe-eindprijsscherm.png) · [wireframe-eindprijsscherm-zonder-waarschuwing.png](img/wireframe-eindprijsscherm-zonder-waarschuwing.png)
 
 ### Schermnavigatie
 

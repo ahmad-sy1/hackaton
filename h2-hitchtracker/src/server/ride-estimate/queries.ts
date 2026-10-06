@@ -1,7 +1,7 @@
 import { aliasedTable, and, asc, desc, eq } from "drizzle-orm";
 import { db } from "@/src/db";
 import { cities, locations, rides, routes, tariffs } from "@/src/db/schema";
-import { buildEstimate, validateInput } from "./ride-estimate";
+import { buildEstimate, isRideId, validateInput } from "./ride-estimate";
 import type {
   ActiveTariff,
   Estimate,
@@ -92,13 +92,9 @@ export async function createRide(estimate: Estimate): Promise<string> {
   return ride.id;
 }
 
-// Accepts any uuid version; Postgres rejects a malformed uuid with an error.
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 /** A stored ride with its pick-up point names, or null for an unknown id. */
 export async function getRideById(id: string): Promise<RideSummary | null> {
-  if (!UUID_PATTERN.test(id)) return null;
+  if (!isRideId(id)) return null;
 
   const origin = aliasedTable(locations, "origin");
   const destination = aliasedTable(locations, "destination");
@@ -110,6 +106,10 @@ export async function getRideById(id: string): Promise<RideSummary | null> {
       estimatedDistanceM: rides.estimatedDistanceM,
       estimatedDurationS: rides.estimatedDurationS,
       estimatedPriceCents: rides.estimatedPriceCents,
+      status: rides.status,
+      actualDistanceM: rides.actualDistanceM,
+      actualDurationS: rides.actualDurationS,
+      finalPriceCents: rides.finalPriceCents,
     })
     .from(rides)
     .innerJoin(origin, eq(rides.originLocationId, origin.id))
