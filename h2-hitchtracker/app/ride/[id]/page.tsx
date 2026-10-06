@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { formatEuro, formatEuroDifference } from "@/src/lib/money";
+import {
+  formatEuro,
+  formatEuroDifference,
+  formatPercentDifference,
+} from "@/src/lib/money";
 import {
   formatDistanceKm,
   formatDurationMinutes,
@@ -119,7 +123,6 @@ function CompletedRide({
     ride.estimatedPriceCents,
     finalPriceCents,
   );
-  const percentSign = comparison.differencePercent < 0 ? "−" : "+";
 
   return (
     <div className="pt-16">
@@ -161,9 +164,7 @@ function CompletedRide({
                   comparison.exceedsThreshold ? "text-orange-800" : undefined
                 }
               >
-                {formatEuroDifference(comparison.differenceCents)} (
-                {percentSign}
-                {Math.abs(comparison.differencePercent)}%)
+                {`${formatEuroDifference(comparison.differenceCents)} (${formatPercentDifference(comparison.differencePercent)})`}
               </dd>
             </div>
           </dl>
