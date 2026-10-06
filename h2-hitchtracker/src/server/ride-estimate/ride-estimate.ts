@@ -15,6 +15,10 @@ export const NO_ESTIMATE_MESSAGE =
 // Same rule as the browser check on the start screen; 9 digits always fit in int4.
 const ID_PATTERN = /^\d{1,9}$/;
 
+// Accepts any uuid version; Postgres rejects a malformed uuid with an error.
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /** AC-01.1: both points are required and must differ. */
 export function validateInput(
   originRaw: unknown,
@@ -25,6 +29,10 @@ export function validateInput(
   if (originId === null || destinationId === null) return missingInput();
   if (originId === destinationId) return missingInput();
   return { status: "ok", originId, destinationId };
+}
+
+export function isRideId(id: unknown): id is string {
+  return typeof id === "string" && UUID_PATTERN.test(id);
 }
 
 /**

@@ -1,7 +1,7 @@
 "use server";
 
 import { notFound, redirect } from "next/navigation";
-import { isRideId } from "../ride-estimate/queries";
+import { isRideId } from "../ride-estimate/ride-estimate";
 import { completeRide } from "./queries";
 import { parseScenario } from "./ride-completion";
 

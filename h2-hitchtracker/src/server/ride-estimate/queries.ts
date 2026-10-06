@@ -1,7 +1,7 @@
 import { aliasedTable, and, asc, desc, eq } from "drizzle-orm";
 import { db } from "@/src/db";
 import { cities, locations, rides, routes, tariffs } from "@/src/db/schema";
-import { buildEstimate, validateInput } from "./ride-estimate";
+import { buildEstimate, isRideId, validateInput } from "./ride-estimate";
 import type {
   ActiveTariff,
   Estimate,
@@ -90,14 +90,6 @@ export async function createRide(estimate: Estimate): Promise<string> {
     })
     .returning({ id: rides.id });
   return ride.id;
-}
-
-// Accepts any uuid version; Postgres rejects a malformed uuid with an error.
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-export function isRideId(id: unknown): id is string {
-  return typeof id === "string" && UUID_PATTERN.test(id);
 }
 
 /** A stored ride with its pick-up point names, or null for an unknown id. */
