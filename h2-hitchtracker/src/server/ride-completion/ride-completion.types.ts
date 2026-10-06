@@ -7,11 +7,6 @@
 /** The demo button simulates the driver; see "Haalbaarheid: afbakening". */
 export type DemoScenario = "normal" | "detour";
 
-export interface DrivenRide {
-  distanceM: number;
-  durationS: number;
-}
-
 export interface PriceComparison {
   differenceCents: number;
   /** Rounded to a whole percent, for display only. */

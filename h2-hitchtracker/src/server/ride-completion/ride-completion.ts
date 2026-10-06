@@ -1,8 +1,5 @@
-import type {
-  DemoScenario,
-  DrivenRide,
-  PriceComparison,
-} from "./ride-completion.types";
+import type { RouteInfo } from "../ride-estimate/ride-estimate.types";
+import type { DemoScenario, PriceComparison } from "./ride-completion.types";
 
 // Fixed deviations on the estimate, as percentages, so both outcomes of
 // AC-02.4 can be shown: "normal" stays under the 20% limit, "detour" goes over.
@@ -19,9 +16,9 @@ export function parseScenario(raw: unknown): DemoScenario | null {
 
 /** Distance and duration the simulated driver actually drove. */
 export function simulateDrivenRide(
-  estimate: DrivenRide,
+  estimate: RouteInfo,
   scenario: DemoScenario,
-): DrivenRide {
+): RouteInfo {
   const { distance, duration } = SCENARIOS[scenario];
   return {
     distanceM: Math.round((estimate.distanceM * distance) / 100),
