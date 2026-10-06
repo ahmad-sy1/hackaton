@@ -15,6 +15,13 @@ export interface PriceComparison {
   exceedsThreshold: boolean;
 }
 
+/**
+ * Expected outcomes are an explicit union, not exceptions. An unknown or
+ * already completed ride is not completable.
+ */
+export type CompleteRideResult =
+  { status: "ok" } | { status: "not_completable" };
+
 /** What `completeRide` needs of a stored ride, including its own tariff. */
 export interface RideToComplete {
   id: string;

@@ -3,7 +3,11 @@ import { db } from "@/src/db";
 import { rides, tariffs } from "@/src/db/schema";
 import { calculatePriceCents } from "@/src/lib/price";
 import { simulateDrivenRide } from "./ride-completion";
-import type { DemoScenario, RideToComplete } from "./ride-completion.types";
+import type {
+  CompleteRideResult,
+  DemoScenario,
+  RideToComplete,
+} from "./ride-completion.types";
 
 /**
  * An accepted ride with the tariff it was estimated with. A completed or
@@ -33,16 +37,16 @@ async function getRideToComplete(id: string): Promise<RideToComplete | null> {
 export async function completeRide(
   id: string,
   scenario: DemoScenario,
-): Promise<void> {
+): Promise<CompleteRideResult> {
   const ride = await getRideToComplete(id);
-  if (ride === null) return;
+  if (ride === null) return { status: "not_completable" };
 
   const driven = simulateDrivenRide(
     { distanceM: ride.estimatedDistanceM, durationS: ride.estimatedDurationS },
     scenario,
   );
 
-  await db
+  const updated = await db
     .update(rides)
     .set({
       status: "afgerond",
@@ -56,5 +60,9 @@ export async function completeRide(
       completedAt: new Date(),
     })
     // The status check guards against a second click completing it twice.
-    .where(and(eq(rides.id, ride.id), eq(rides.status, "geaccepteerd")));
+    .where(and(eq(rides.id, ride.id), eq(rides.status, "geaccepteerd")))
+    .returning({ id: rides.id });
+  return updated.length === 1
+    ? { status: "ok" }
+    : { status: "not_completable" };
 }

@@ -16,6 +16,8 @@ export async function completeRideDemo(
   // Both values reach the server from the browser and can be tampered with.
   if (!isRideId(rideId)) notFound();
   const scenario = parseScenario(formData.get("scenario"));
+  // Either way the ride screen shows the stored state, so the result needs no
+  // message of its own.
   if (scenario !== null) await completeRide(rideId, scenario);
 
   redirect(`/ride/${rideId}`);
