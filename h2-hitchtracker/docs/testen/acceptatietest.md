@@ -1,11 +1,11 @@
 # Acceptatietest HitchTracker
 
-|                |     |
-| -------------- | --- |
-| Naam Tester    |     |
-| Leerlingnummer |     |
-| Datum          |     |
-| Versie         | V1  |
+|                |              |
+| -------------- | ------------ |
+| Naam Tester    | Osama Alasmi |
+| Leerlingnummer | 1206995      |
+| Datum          | 08.10.2026   |
+| Versie         | V1           |
 
 De tester vult de kolommen Werkelijk resultaat, Aanpassingen, Uren en Door in.
 Prioriteit: 1 = laag, 2 = middel, 3 = hoog.
@@ -25,47 +25,49 @@ Vooraf: schone start van de database (zie hoofdstuk 3 van het testplan), Chrome 
 
 ### 1. Een schatting opvragen
 
-| Actie              | Scenario                                                                              | Verwacht resultaat                                                                                                                                              | Werkelijk resultaat | Aanpassingen | Uren | Prioriteit | Door |
-| ------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------ | ---- | ---------- | ---- |
-| Schatting opvragen | De reiziger kiest Centraal Station als vertrekpunt en Schiphol als bestemming (TC-04) | De reiziger ziet "Centraal Station → Schiphol", de prijs `± € 53,80` en `ca. 25 minuten · 17 km`                                                                |                     |              |      | 3          |      |
-| Tarief bekijken    | De reiziger zoekt op het schattingsscherm op welk tarief er is gebruikt (TC-06)       | Het blok "Gebruikt tarief (Amsterdam)" toont Starttarief € 3,00, Per km € 2,40 en Per minuut € 0,40, met de tekst "De eindprijs wordt met dit tarief berekend." |                     |              |      | 3          |      |
+| Actie              | Scenario                                                                              | Verwacht resultaat                                                                                                                                              | Werkelijk resultaat | Aanpassingen | Uren | Prioriteit | Door   |
+| ------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------ | ---- | ---------- | ------ |
+| Schatting opvragen | De reiziger kiest Centraal Station als vertrekpunt en Schiphol als bestemming (TC-04) | De reiziger ziet "Centraal Station → Schiphol", de prijs `± € 53,80` en `ca. 25 minuten · 17 km`                                                                | Conform verwacht    | Geen         | 0    | 3          | n.v.t. |
+| Tarief bekijken    | De reiziger zoekt op het schattingsscherm op welk tarief er is gebruikt (TC-06)       | Het blok "Gebruikt tarief (Amsterdam)" toont Starttarief € 3,00, Per km € 2,40 en Per minuut € 0,40, met de tekst "De eindprijs wordt met dit tarief berekend." | Conform verwacht    | Geen         | 0    | 3          | n.v.t. |
 
 ### 2. Er is geen schatting mogelijk
 
-| Actie              | Scenario                                                                                   | Verwacht resultaat                                                                                                                                        | Werkelijk resultaat | Aanpassingen | Uren | Prioriteit | Door |
-| ------------------ | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------ | ---- | ---------- | ---- |
-| Schatting opvragen | De reiziger klikt op "Schatting opvragen" zonder iets te kiezen (TC-01)                    | De reiziger ziet "Kies een vertrekpunt en een bestemming." en beide keuzevelden krijgen een rode rand; er verschijnt geen schatting                       |                     |              |      | 3          |      |
-| Schatting opvragen | De reiziger kiest alleen een vertrekpunt en klikt op "Schatting opvragen" (TC-02)          | De reiziger ziet "Kies een vertrekpunt en een bestemming."; er verschijnt geen schatting                                                                  |                     |              |      | 2          |      |
-| Schatting opvragen | De reiziger kiest Rotterdam Centraal als vertrekpunt en Erasmusbrug als bestemming (TC-11) | De reiziger ziet "In deze stad is nog geen tarief bekend. Een schatting is niet mogelijk." en de knop is grijs; na een andere keuze is de knop weer blauw |                     |              |      | 3          |      |
+| Actie              | Scenario                                                                                   | Verwacht resultaat                                                                                                                                        | Werkelijk resultaat | Aanpassingen | Uren | Prioriteit | Door   |
+| ------------------ | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------ | ---- | ---------- | ------ |
+| Schatting opvragen | De reiziger klikt op "Schatting opvragen" zonder iets te kiezen (TC-01)                    | De reiziger ziet "Kies een vertrekpunt en een bestemming." en beide keuzevelden krijgen een rode rand; er verschijnt geen schatting                       | Conform verwacht    | Geen         | 0    | 3          | n.v.t. |
+| Schatting opvragen | De reiziger kiest alleen een vertrekpunt en klikt op "Schatting opvragen" (TC-02)          | De reiziger ziet "Kies een vertrekpunt en een bestemming."; er verschijnt geen schatting                                                                  | Conform verwacht    | Geen         | 0    | 2          | n.v.t. |
+| Schatting opvragen | De reiziger kiest Rotterdam Centraal als vertrekpunt en Erasmusbrug als bestemming (TC-11) | De reiziger ziet "In deze stad is nog geen tarief bekend. Een schatting is niet mogelijk." en de knop is grijs; na een andere keuze is de knop weer blauw | Conform verwacht    | Geen         | 0    | 3          | n.v.t. |
 
 ## US-02 Eindprijs controleren
 
 ### 3. Een normale rit afronden
 
-| Actie             | Scenario                                                                                                    | Verwacht resultaat                                                                                            | Werkelijk resultaat | Aanpassingen | Uren | Prioriteit | Door |
-| ----------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------- | ------------ | ---- | ---------- | ---- |
-| Rit afronden      | De reiziger accepteert de schatting Centraal Station → Schiphol en klikt op "Rit afronden: normaal" (TC-13) | De reiziger ziet "Rit afgerond" met Eindprijs € 56,34, Gereden afstand 17,9 km en Ritduur 26 min              |                     |              |      | 3          |      |
-| Verschil bekijken | De reiziger vergelijkt de eindprijs met de schatting (TC-19)                                                | Schatting € 53,80 en Eindprijs € 56,34 staan naast elkaar; het verschil is "+ € 2,54 (+5%)"                   |                     |              |      | 3          |      |
-| Verschil bekijken | De reiziger kijkt of er een waarschuwing staat (TC-24)                                                      | Er staat geen waarschuwing; wel "Deze prijs is berekend door HitchTracker, niet ingevoerd door de chauffeur." |                     |              |      | 3          |      |
-| Rit terugvinden   | De reiziger heeft de ritlink gekopieerd, sluit het tabblad en opent de link in een nieuw tabblad (TC-14)    | De reiziger ziet hetzelfde eindprijsscherm; het demoblok is weg                                               |                     |              |      | 2          |      |
+| Actie             | Scenario                                                                                                    | Verwacht resultaat                                                                                            | Werkelijk resultaat                                                                                                                               | Aanpassingen | Uren | Prioriteit | Door   |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ---- | ---------- | ------ |
+| Rit afronden      | De reiziger accepteert de schatting Centraal Station → Schiphol en klikt op "Rit afronden: normaal" (TC-13) | De reiziger ziet "Rit afgerond" met Eindprijs € 56,34, Gereden afstand 17,9 km en Ritduur 26 min              | Conform verwacht: Eindprijs € 56,34, Gereden afstand 17,9 km, Ritduur 26 min                                                                      | Geen         | 0    | 3          | n.v.t. |
+| Verschil bekijken | De reiziger vergelijkt de eindprijs met de schatting (TC-19)                                                | Schatting € 53,80 en Eindprijs € 56,34 staan naast elkaar; het verschil is "+ € 2,54 (+5%)"                   | Conform verwacht: verschil "+ € 2,54 (+5%)"                                                                                                       | Geen         | 0    | 3          | n.v.t. |
+| Verschil bekijken | De reiziger kijkt of er een waarschuwing staat (TC-24)                                                      | Er staat geen waarschuwing; wel "Deze prijs is berekend door HitchTracker, niet ingevoerd door de chauffeur." | Conform verwacht: geen waarschuwing; de tekst "Deze prijs is berekend door HitchTracker, niet ingevoerd door de chauffeur." staat op het scherm   | Geen         | 0    | 3          | n.v.t. |
+| Rit terugvinden   | De reiziger heeft de ritlink gekopieerd, sluit het tabblad en opent de link in een nieuw tabblad (TC-14)    | De reiziger ziet hetzelfde eindprijsscherm; het demoblok is weg                                               | Conform verwacht: de link `/ride/a55eb698-15a6-4eaa-bcaf-75924b53dc5e` toont in een nieuw tabblad hetzelfde eindprijsscherm met Eindprijs € 56,34 | Geen         | 0    | 2          | n.v.t. |
 
 ### 4. Een rit met een omweg afronden
 
-| Actie              | Scenario                                                                                                           | Verwacht resultaat                                                                                                                                         | Werkelijk resultaat | Aanpassingen | Uren | Prioriteit | Door |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------ | ---- | ---------- | ---- |
-| Rit afronden       | De reiziger plant een nieuwe rit Centraal Station → Schiphol, accepteert en klikt op "Rit afronden: omweg" (TC-20) | De reiziger ziet Eindprijs € 67,00, Gereden afstand 21,3 km, Ritduur 33 min en het verschil "+ € 13,20 (+25%)"                                             |                     |              |      | 2          |      |
-| Waarschuwing lezen | De reiziger kijkt of er een waarschuwing staat en wat die zegt (TC-23)                                             | Er staat een oranje waarschuwing: "De eindprijs is meer dan 20% hoger dan de schatting. Vraag de chauffeur om uitleg, bijvoorbeeld over de gereden route." |                     |              |      | 3          |      |
+| Actie              | Scenario                                                                                                           | Verwacht resultaat                                                                                                                                         | Werkelijk resultaat                                   | Aanpassingen | Uren | Prioriteit | Door   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------ | ---- | ---------- | ------ |
+| Rit afronden       | De reiziger plant een nieuwe rit Centraal Station → Schiphol, accepteert en klikt op "Rit afronden: omweg" (TC-20) | De reiziger ziet Eindprijs € 67,00, Gereden afstand 21,3 km, Ritduur 33 min en het verschil "+ € 13,20 (+25%)"                                             | Conform verwacht                                      | Geen         | 0    | 2          | n.v.t. |
+| Waarschuwing lezen | De reiziger kijkt of er een waarschuwing staat en wat die zegt (TC-23)                                             | Er staat een oranje waarschuwing: "De eindprijs is meer dan 20% hoger dan de schatting. Vraag de chauffeur om uitleg, bijvoorbeeld over de gereden route." | Conform verwacht: de waarschuwing staat op het scherm | Geen         | 0    | 3          | n.v.t. |
+
+De testpersoon is nergens vastgelopen en had geen hulp nodig.
 
 ## Usability-vragen
 
 Na de scenario's beantwoordt de testpersoon deze vragen met een cijfer van 1 (helemaal niet) tot 5 (helemaal wel) en een korte toelichting. De tester schrijft de antwoorden op.
 
-| #   | Vraag                                                                             | Cijfer (1–5) | Toelichting |
-| --- | --------------------------------------------------------------------------------- | ------------ | ----------- |
-| 1   | Was meteen duidelijk wat de rit ongeveer kost en hoe lang hij duurt?              |              |             |
-| 2   | Begreep je welk tarief er is gebruikt?                                            |              |             |
-| 3   | Was duidelijk dat de rit pas wordt opgeslagen als je de schatting accepteert?     |              |             |
-| 4   | Begreep je het verschil tussen de schatting en de eindprijs?                      |              |             |
-| 5   | Was de waarschuwing duidelijk, en vond je de toon eerlijk tegenover de chauffeur? |              |             |
-| 6   | Was het duidelijk waarom je wel of geen waarschuwing kreeg?                       |              |             |
-| 7   | Wat zou je veranderen?                                                            | n.v.t.       |             |
+| #   | Vraag                                                                             | Cijfer (1–5) | Toelichting                                                                                                       |
+| --- | --------------------------------------------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| 1   | Was meteen duidelijk wat de rit ongeveer kost en hoe lang hij duurt?              | 5            | Ja, alles stond duidelijk voor me.                                                                                |
+| 2   | Begreep je welk tarief er is gebruikt?                                            | 4            | Ja, ik moest wel even goed lezen.                                                                                 |
+| 3   | Was duidelijk dat de rit pas wordt opgeslagen als je de schatting accepteert?     | 4            | Ja, als je het goed leest begrijp je dat je eerst het tarief krijgt en daarna kiest of je het accepteert of niet. |
+| 4   | Begreep je het verschil tussen de schatting en de eindprijs?                      | 4            | Ja, alleen had ik het niet verwacht.                                                                              |
+| 5   | Was de waarschuwing duidelijk, en vond je de toon eerlijk tegenover de chauffeur? | 4            | Ja, dat was duidelijk.                                                                                            |
+| 6   | Was het duidelijk waarom je wel of geen waarschuwing kreeg?                       | 3            | Ik moest even goed lezen wat de waarschuwing was.                                                                 |
+| 7   | Wat zou je veranderen?                                                            | n.v.t.       | Niets.                                                                                                            |
