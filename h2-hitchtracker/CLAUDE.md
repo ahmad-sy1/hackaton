@@ -11,7 +11,7 @@ zodat hij niet te veel betaalt. Drie epics:
 
 ## Status
 
-- Fase 2 (realiseren). Code mag in `src/` en `app/`; de bestanden in `docs/ontwerp/` blijven
+- Fase 3 (testen). Code mag in `src/` en `app/`; de bestanden in `docs/ontwerp/` blijven
   alleen op expliciete vraag aanpasbaar.
 - Kernflow: Epic 1 (US-01 Ritschatting vooraf) + Epic 3 (US-02 Eindprijs controleren).
   Epic 2 (live route tijdens de rit) valt buiten scope.
@@ -55,6 +55,7 @@ zodat hij niet te veel betaalt. Drie epics:
   en acceptatiecriteria zijn Nederlands). De bestanden in docs/ontwerp/ blijven Nederlands.
 - docs/testen/ is ook een uitzondering, net als docs/ontwerp/: mapnaam, bestandsnamen en inhoud
   zijn Nederlands (zelfde opbouw als H1).
+- README.md en docs/gebruikershandleiding.md zijn ook Nederlands, net als docs/testen/.
 - URL's zijn ook Engels: /estimate?from=<id>&to=<id> en /ride/[id]. De wireframes tonen nog
   /schatting en /rit/; de Engelse URL's zijn een bewuste keuze.
 - Het bestaande script src/server/ritten/opschonen.ts en het npm-script ritten:opschonen blijven
