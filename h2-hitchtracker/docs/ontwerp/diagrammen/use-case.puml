@@ -1,0 +1,27 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor Reiziger
+actor "Chauffeur\n(gesimuleerd)" as Chauffeur
+
+rectangle HitchTracker {
+  usecase "Ritschatting opvragen" as UC1
+  usecase "Melding: geen tarief\nvoor deze stad" as UC6
+  usecase "Schatting accepteren" as UC2
+  usecase "Prijs berekenen\nmet tarief" as UC5
+  usecase "Rit afronden" as UC4
+  usecase "Eindprijs bekijken" as UC3
+  usecase "Waarschuwing tonen\n(> 20% duurder)" as UC7
+}
+
+Reiziger --> UC1
+Reiziger --> UC2
+Reiziger --> UC3
+UC4 <-- Chauffeur
+
+UC1 ..> UC5 : <<include>>
+UC4 ..> UC5 : <<include>>
+UC1 <.. UC6 : <<extend>>
+UC3 <.. UC7 : <<extend>>
+@enduml

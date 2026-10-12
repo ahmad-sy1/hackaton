@@ -1,0 +1,52 @@
+@startuml
+title Activiteitendiagram HitchTracker – ritschatting en eindprijs
+
+|Reiziger|
+start
+repeat
+  :Vertrekpunt en bestemming kiezen;
+  |Systeem|
+  if (Beide ingevuld?) then (nee)
+    :Melding tonen:\n"Kies vertrekpunt en bestemming";
+  elseif (Actief tarief voor deze stad?) then (nee)
+    :Melding tonen:\n"Geen schatting mogelijk in deze stad";
+  else (ja)
+    :Route opzoeken\n(afstand en duur);
+    :Prijs berekenen\nstart + km × tarief + min × tarief;
+    :Schatting tonen\n(reistijd, prijs, gebruikt tarief);
+  endif
+repeat while (Schatting getoond?) is (nee)
+->ja;
+
+|Reiziger|
+if (Schatting accepteren?) then (ja)
+else (nee)
+  :Niets opgeslagen;
+  stop
+endif
+
+|Systeem|
+:Rit aanmaken en schatting vastleggen\n(status: geaccepteerd);
+
+|Chauffeur (gesimuleerd)|
+:Rit rijden;
+:Rit afronden;
+
+|Systeem|
+:Werkelijke afstand en duur vastleggen;
+fork
+  :Eindprijs berekenen\nmet hetzelfde tarief;
+fork again
+  :Status → afgerond\nen eindtijd vastleggen;
+end fork
+:Verschil met schatting berekenen\n(€ en %);
+:Eindprijs, schatting en verschil tonen;
+if (Eindprijs > schatting + 20%?) then (ja)
+  :Waarschuwing tonen\nmet advies chauffeur aan te spreken;
+else (nee)
+endif
+
+|Reiziger|
+:Eindprijs bekijken;
+stop
+@enduml

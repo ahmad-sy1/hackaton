@@ -6,7 +6,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - "h1-sportschool-de-kast/**"
+      - "h2-hitchtracker/**"
       - ".github/workflows/ci.yml"
 
 # A newer push to the same PR cancels the run that is still going.
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: h1-sportschool-de-kast
+        working-directory: h2-hitchtracker
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: h1-sportschool-de-kast/package-lock.json
+          cache-dependency-path: h2-hitchtracker/package-lock.json
 
       - run: npm ci
 
